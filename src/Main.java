@@ -1,9 +1,8 @@
-import com.sun.org.apache.xerces.internal.xs.LSInputList;
+import DataStructure.ListNode;
+import DataStructure.TreeNode;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Stream;
 
 public class Main {
 
@@ -112,8 +111,6 @@ public class Main {
             sort(ints, m + 1, e);//右循环
         }
     }
-
-
 
 
     //二叉树堆排序，使用数组表示
@@ -595,7 +592,6 @@ nums2 = [2,5,6],       n = 3
         }
         return b.length();
     }
-
 
 
     //将一个给定字符串根据给定的行数，以从上往下、从左到右进行 N 字形排列。
@@ -1292,14 +1288,7 @@ nums2 = [2,5,6],       n = 3
     输入：1->2->4, 1->3->4
     输出：1->1->2->3->4->4
      */
-    public static class ListNode {
-        int val;
-        ListNode next;
 
-        ListNode(int x) {
-            val = x;
-        }
-    }
 
     public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummyHead = new ListNode(0);
@@ -2191,63 +2180,5 @@ E   D   H   N
 
 
     public static void main(String[] args) {
-    }
-}
-
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-
-    TreeNode(int x) {
-        val = x;
-    }
-}
-
-/**
- * 使用队列实现栈的下列操作：
- * <p>
- * push(x) -- 元素 x 入栈
- * pop() -- 移除栈顶元素
- * top() -- 获取栈顶元素
- * empty() -- 返回栈是否为空
- */
-class MyStack {
-
-    private LinkedList<Integer> integers;
-
-    /**
-     * Initialize your data structure here.
-     */
-    public MyStack() {
-        integers = new LinkedList<>();
-    }
-
-    /**
-     * Push element x onto stack.
-     */
-    public void push(int x) {
-        integers.add(x);
-    }
-
-    /**
-     * Removes the element on top of the stack and returns that element.
-     */
-    public int pop() {
-        return integers.removeLast();
-    }
-
-    /**
-     * Get the top element.
-     */
-    public int top() {
-        return integers.getLast();
-    }
-
-    /**
-     * Returns whether the stack is empty.
-     */
-    public boolean empty() {
-        return integers.isEmpty();
     }
 }
