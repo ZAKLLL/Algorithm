@@ -158,7 +158,7 @@ public class Solution {
 
         StringBuilder sb = new StringBuilder();
         for (int i : res) {
-            if (!(sb.length()==0)&&i==0) sb.append(i);
+            if (!(sb.length() == 0) && i == 0) sb.append(i);
         }
         return sb.length() == 0 ? "0" : sb.toString();
     }
@@ -436,6 +436,10 @@ public class Solution {
         return true;
     }
 
+
+    /*
+    获取二维数组中有多少个相连的1,深度优先算法
+     */
     public static int getOneGroup(int[][] nums) {
         int count = 2;
         for (int i = 0; i < nums.length; i++) {
@@ -461,10 +465,623 @@ public class Solution {
         goFindAnotherOne(nums, i, j + 1, count);//向右
     }
 
-    public static void main(String[] args) {
+    private static int k1 = 0;
+    private static int result;
+    private static int count;
 
-        System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
+    /*
+    找到二叉排序树(二叉搜索树:中序递增) 的倒数第二小
+     */
+    public int kthSmallest(TreeNode root, int k) {
+        count = 0;
+        result = 0;
+        k1 = k;
+        h1(root);
+        return result;
     }
+
+    public void h1(TreeNode root) {
+        if (root == null) return;
+        h1(root.left);
+        count++;
+        if (count == k1) {
+            result = root.val;
+            return;
+        }
+        h1(root.right);
+    }
+
+    /*给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+     */
+    private TreeNode t1;
+    private TreeNode t2;
+    private boolean t1Get;
+    private boolean t2Get;
+    private boolean flag = false;
+    private TreeNode t3 = null;
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        t1 = p;
+        t2 = q;
+        h3(root);
+        return t3;
+    }
+
+    //递归找到最接近的公共父节点
+    public void h3(TreeNode root) {
+        if (root == null) return;
+        //每次调用之前都初始化标志位
+        flag = false;
+        t1Get = false;
+        t2Get = false;
+        contains(root);
+        if (flag) {
+            t3 = root;
+            h3(root.left);
+            if (flag) {
+                t3 = root;
+            }
+            h3(root.right);
+            if (flag) {
+                t3 = root;
+            }
+        }
+
+    }
+
+    //节点是否包含两个子节点
+    public void contains(TreeNode root) {
+        if (root == null) return;
+        contains(root.left);
+        contains(root.right);
+        //t2先于t1被找到
+        if (root == t1) {
+            if (t2Get) {
+                flag = true;
+                return;
+            } else t1Get = true;
+        }
+        //t1先于t2被找到
+        if (root == t2) {
+            if (t1Get) {
+                flag = true;
+            } else t2Get = true;
+        }
+    }
+
+    //超级无敌牛逼的递归算法lowestCommonAncestor
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p1, TreeNode p2) {
+        if (root == null || root == p1 || root == p2) return root;
+        TreeNode left = lowestCommonAncestor2(root.left, p1, p2);
+        TreeNode right = lowestCommonAncestor2(root.right, p1, p2);
+        if (left == null && right == null) return null;
+        if (left == null || right == null) return left == null ? right : left;
+        return root;
+    }
+
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        generate(res, "", 0, 0, n);
+        return res;
+    }
+
+    //count1统计“(”的个数，count2统计“)”的个数
+    public void generate(List<String> res, String ans, int count1, int count2, int n) {
+        if (count1 > n || count2 > n) return;
+        if (count1 == n && count2 == n) res.add(ans);
+        /*核心点: count1>=count2 ,
+        从左往右添加,只有满足左边括号数量>=右边括号时候,
+        才能够满足题意,否则会出现括号不匹配的情况
+        */
+        if (count1 >= count2) {
+            generate(res, ans + "(", count1 + 1, count2, n);
+            generate(res, ans + ")", count1, count2 + 1, n);
+        }
+    }
+
+    /*
+    给出一个 32 位的有符号整数，你需要将这个整数中每位上的数字进行反转。
+    示例 1:
+    输入: 123
+    输出: 321
+     */
+    public int reverse(int x) {
+        if (x == 0) return 0;
+        int res = 0;
+        int temp = 0;
+        while (x != 0) {
+            res = res * 10 + x % 10;
+            //核心在这一步,判断本次翻转值改变后，再逆操作，比较与操作前值是否相等;如果有溢出就绝对不相等。
+            if ((res - x % 10) / 10 != temp) return 0;
+            temp = res;
+            x /= 10;
+        }
+        return res;
+    }
+
+    /*
+    判断一个 9x9 的数独是否有效。只需要根据以下规则，验证已经填入的数字是否有效即可。
+    数字 1-9 在每一行只能出现一次。
+    数字 1-9 在每一列只能出现一次。
+    数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+    */
+    public boolean isValidSudoku(char[][] board) {
+        int count;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                //先判断是否满足一二条件
+                char temp = board[i][j];
+                if (temp == '.') continue;
+                count = 0;
+                //判断行有没有有重复的
+                for (char c : board[i]) {
+                    if (temp == c) count++;
+                    if (count > 1) return false;
+                }
+                //判断所在列有没有重复的
+                count = 0;
+                for (int k = 0; k < 9; k++) {
+                    if (board[k][j] == temp) count++;
+                    if (count > 1) return false;
+                }
+                count = 0;
+                //找到所在点的黑框
+                for (int p = (j / 3) * 3; p < (j / 3 + 1) * 3; p++) {
+                    for (int k = (i / 3) * 3; k < (i / 3 + 1) * 3; k++) {
+                        if (board[k][p] == temp) count++;
+                        if (count > 1) return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    //二分法抽取出最左或最右的目标的位置，left决定向左找还是向右找
+    public int extremeTargetIndex(int[] nums, int target, boolean left) {
+        int low = 0;
+        int high = nums.length - 1;
+        int mid;
+        while (low < high) {
+            mid = (low + high) / 2;
+            if (nums[mid] > target || (target == nums[mid] && left)) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+        //当找最右时可能出现low 和 high都是target的index,因为在下一步会减一，所以这里加上
+        if (!left && nums[low] == target) return low + 1;
+        return low;
+    }
+
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[]{-1, -1};
+        //获取左边的index
+        int leftIndex = extremeTargetIndex(nums, target, true);
+        //当返回值为最右时,判断是否成功找到target
+        if (leftIndex == nums.length - 1) {
+            if (nums[leftIndex] == target) {
+                res[0] = leftIndex;
+                res[1] = leftIndex;
+                return res;
+            }
+            return res;
+        }
+        if (nums[leftIndex] != target) return res;
+
+        int rightIndex = extremeTargetIndex(nums, target, false) - 1;
+        res[0] = leftIndex;
+        res[1] = rightIndex;
+        return res;
+    }
+
+    //自定义幂
+    public double myPow(double x, int n) {
+        boolean isNegative = false;
+        if (n < 0) {
+            if (x == 1.0) return 1;
+            if (n == Integer.MIN_VALUE) {
+                if (x == -1.0) return 1;
+                return 0;
+            }
+            isNegative = true;
+            n = -1 * n;
+        } else if (n == 0) return 1;
+        double res = 1;
+        double temp = x;
+        while (n > 1) {
+            if (n % 2 == 1) res *= temp;
+            temp *= temp;
+            n /= 2;
+        }
+        return isNegative ? 1 / (res * temp) : res * temp;
+    }
+
+    /*
+    给定一个字符串数组，将字母异位词组合在一起。字母异位词指字母相同，但排列不同的字符串。
+    示例:
+    输入: ["eat", "tea", "tan", "ate", "nat", "bat"],
+    输出:
+    [
+      ["ate","eat","tea"],
+      ["nat","tan"],
+      ["bat"]
+    ]
+    说明：
+    所有输入均为小写字母。
+    不考虑答案输出的顺序。
+     */
+    public List<List<String>> groupAnagrams(String[] strs) {
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] chars = str.toCharArray();
+            Arrays.sort(chars);
+            String key = String.valueOf(chars);
+            //保证map中拥有每个str对应的key
+            if (!map.containsKey(key)) map.put(key, new ArrayList<>());
+            //到这一步说明一定包含key
+            map.get(key).add(str);
+        }
+        return new LinkedList<>(map.values());
+    }
+
+    public boolean isAnagram(String a, String b) {
+        if (a.length() != b.length()) return false;
+        char[] charsa = a.toCharArray();
+        char[] charsb = b.toCharArray();
+        Arrays.sort(charsa);
+        Arrays.sort(charsb);
+        for (int i = 0; i < a.length(); i++) {
+            if (charsa[i] != charsb[i]) return false;
+        }
+        return true;
+    }
+
+    public void sortColors(int[] nums) {
+        int low = 0;
+        int high = nums.length - 1;
+        int i = 0;
+        while (i <= high) {
+            if (low < high && nums[low] == 0) {
+                low++;
+                continue;
+            }
+            if (high >= 0 && nums[high] == 2) {
+                high--;
+                continue;
+            }
+            if (i <= low) {
+                i++;
+                continue;
+            }
+
+
+            if (nums[i] == 0) {
+                nums[i] = nums[low];
+                nums[low] = 0;
+                low++;
+                i++;
+                continue;
+            }
+            if (nums[i] == 2) {
+                nums[i] = nums[high];
+                nums[high] = 2;
+                high--;
+                continue;
+            } else {
+                if (nums[low] == 2) {
+                    nums[low] = nums[high];
+                    nums[high] = 2;
+                }
+                i++;
+            }
+        }
+    }
+
+    public int fibonacci(int n) {
+        if (n == 1 || n == 2) return 1;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+
+    public int fibonacci_dp(int n) {
+        if (n == 1 || n == 2) return 1;
+        int[] dp = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            if (i == 1 || i == 2) {
+                dp[i] = 1;
+            } else {
+                dp[i] = dp[i - 1] + dp[i - 2];
+            }
+        }
+        return dp[n];
+    }
+
+    public int getMostMoney(int[][] array) {
+        int[] dp = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            int currentTimeMoney = array[i][1] - array[i][0];
+            if (i == 0) {
+                dp[i] = currentTimeMoney;
+            } else {
+                //获取上一个匹配的时间段
+                int pre = 0;
+                boolean find = false;
+                for (int j = i - 1; j >= 0; j--) {
+                    if (array[j][1] == array[i][0]) {
+                        find = true;
+                        pre = j;
+                    }
+                }
+                dp[i] = Math.max(dp[i - 1], currentTimeMoney + (find ? dp[pre] : 0));
+            }
+        }
+        return dp[array.length - 1];
+    }
+
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 && j == 0) {
+                    dp[i][j] = 1;
+                } else if (i == 0) {
+                    dp[i][j] = dp[i][j - 1];
+                } else if (j == 0) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = dp[i][j - 1] + dp[i - 1][j];
+                }
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+    public String longestPalindrome(String s) {
+        if (s.length() == 1) return s;
+        boolean[][] dp = new boolean[s.length()][s.length()];
+        String res = "";
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (i == j) {
+                    dp[i][j] = true;
+                } else {
+                    if (i - 1 > j + 1) {
+                        dp[i][j] = (s.charAt(j) == s.charAt(i)) && ((dp[i - 1][j + 1]));
+                    } else if ((i - 1 == j + 1) || i - j == 1) {
+                        dp[i][j] = (s.charAt(j) == s.charAt(i));
+                    }
+                }
+                if (dp[i][j]) {
+                    if ((i - j + 1) > res.length()) {
+                        res = s.substring(j, i + 1);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    public int getBiggestGroup(int[] nums) {
+        if (nums.length == 1) return nums[0];
+        if (nums.length == 2) return Math.max(nums[0], nums[1]);
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[0], nums[1]);
+        for (int i = 2; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        return dp[nums.length - 1];
+    }
+
+    public boolean subSet(int[] nums, int index, int n) {
+        if (nums[index] == n) return true;
+        if (index == 0) return false;
+        if (nums[index] > n) return subSet(nums, index - 1, n);
+        return subSet(nums, index - 1, n - nums[index]) || subSet(nums, index - 1, n);
+    }
+
+    public boolean subSet_dp(int[] nums, int n) {
+        boolean[][] dp = new boolean[nums.length][n + 1];
+        for (int i = 0; i < dp[0].length; i++) {
+            if (nums[0] == i) dp[0][i] = true;
+        }
+        for (int i = 0; i < dp.length; i++) {
+            dp[i][0] = true;
+        }
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 1; j < dp[0].length; j++) {
+                dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];
+            }
+        }
+        return dp[nums.length - 1][n];
+    }
+
+    /*
+    给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+    说明：每次只能向下或者向右移动一步。
+    示例:
+    输入:
+    [
+      [1,3,1],
+      [1,5,1],
+      [4,2,1]
+    ]
+    输出: 7
+    解释: 因为路径 1→3→1→1→1 的总和最小。
+     */
+    public int minPathSum(int[][] grid) {
+        int[][] dp = new int[grid.length][grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                int sum;
+                if (i == 0) {
+                    sum = 0;
+                    for (int k = 0; k <= j; k++) {
+                        sum += grid[i][k];
+                    }
+                    dp[i][j] = sum;
+                } else if (j == 0) {
+                    sum = 0;
+                    for (int k = 0; k <= i; k++) {
+                        sum += grid[k][j];
+                    }
+                    dp[i][j] = sum;
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j] + grid[i][j], dp[i][j - 1] + grid[i][j]);
+                }
+            }
+        }
+        return dp[grid.length - 1][grid[0].length - 1];
+    }
+
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int[][] dp = new int[obstacleGrid.length][obstacleGrid[0].length];
+        for (int i = 0; i < obstacleGrid.length; i++) {
+            for (int j = 0; j < obstacleGrid[0].length; j++) {
+                if (i == 0 && j == 0) {
+                    if (obstacleGrid[i][j] == 0) dp[i][j] = 1;
+                    else dp[i][j] = 0;
+                } else if (i == 0) {
+                    if (obstacleGrid[i][j] == 0 && dp[i][j - 1] == 1) dp[i][j] = 1;
+                    else dp[i][j] = 0;
+                } else if (j == 0) {
+                    if (obstacleGrid[i][j] == 0 && dp[i - 1][j] == 1) dp[i][j] = 1;
+                    else dp[i][j] = 0;
+                } else {
+                    if (obstacleGrid[i][j] == 0) dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                    else dp[i][j] = 0;
+                }
+            }
+        }
+        return dp[obstacleGrid.length - 1][obstacleGrid[0].length - 1];
+    }
+
+    /*
+    单词接龙
+     */
+    public int Solitaire(String[] arr) {
+        if (arr.length <= 1) return arr.length;
+        List<String> list = new LinkedList<>();
+        boolean res = false;
+        for (String s : arr) {
+            list.clear();
+            for (String str : arr) {
+                if (!s.equals(str)) list.add(str);
+            }
+            res = res || h4(s, list);
+        }
+        return res ? 1 : 0;
+    }
+
+    public boolean h4(String str, List<String> list) {
+        if (list.size() == 1) return str.charAt(str.length() - 1) == list.get(0).charAt(0);
+        boolean result = false;
+        for (int i = 0; i < list.size(); i++) {
+            String s = list.get(i);
+            if (str.charAt(str.length() - 1) == s.charAt(0)) {
+                list.remove(s);
+                result = result || h4(s, list);
+            }
+        }
+        return result;
+    }
+
+    public int minimumTotal(List<List<Integer>> triangle) {
+        if (triangle.size() == 1) return triangle.get(0).get(0);
+        int len = triangle.size();
+        int[][] dp = new int[len][len];
+        dp[0][0] = triangle.get(0).get(0);
+        dp[1][0] = triangle.get(1).get(0) + dp[0][0];
+        dp[1][1] = triangle.get(1).get(1) + dp[0][0];
+        if (triangle.size() == 2) return Math.min(dp[1][0], dp[1][1]);
+        for (int i = 2; i < triangle.size(); i++) {
+            for (int j = 0; j < triangle.get(i).size(); j++) {
+                if (j == 0) {
+                    dp[i][j] = dp[i - 1][j] + triangle.get(i).get(j);
+                } else if (j == triangle.get(i).size() - 1) {
+                    dp[i][j] = dp[i - 1][j - 1] + triangle.get(i).get(j);
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle.get(i).get(j);
+                }
+            }
+        }
+        int result = dp[len - 1][0];
+        for (int i : dp[len - 1]) {
+            if (result > i) {
+                result = i;
+            }
+        }
+        return result;
+    }
+
+    /*
+       给定一个 m x n 的矩阵，如果一个元素为 0，则将其所在行和列的所有元素都设为 0。请使用原地算法。
+     */
+    public void setZeroes(int[][] matrix) {
+        List<Integer[]> integers = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) {
+                    integers.add(new Integer[]{i, j});
+                }
+            }
+        }
+        integers.forEach(arry -> {
+            int p = arry[0];
+            for (int i = 0; i < matrix[0].length; i++) {
+                matrix[p][i] = 0;
+            }
+            p = arry[1];
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][p] = 0;
+            }
+
+        });
+    }
+
+    public static void main(String[] args) {
+        int[][] nums = new int[][]{
+                {0, 0, 0, 5},
+                {4, 3, 1, 4},
+                {0, 1, 1, 4},
+                {1, 2, 1, 3},
+                {0, 0, 1, 1},
+        };
+        new Solution().setZeroes(nums);
+        for (int[] num : nums) {
+            for (int i : num) {
+                System.out.print(i + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println();
+
+    }
+
+//      备用TreeNode
+//    {
+//        TreeNode t3 = new TreeNode(3);
+//        TreeNode t5 = new TreeNode(5);
+//        TreeNode t6 = new TreeNode(6);
+//        TreeNode t2 = new TreeNode(2);
+//        TreeNode t7 = new TreeNode(7);
+//        TreeNode t4 = new TreeNode(4);
+//        TreeNode t1 = new TreeNode(1);
+//        TreeNode t0 = new TreeNode(0);
+//        TreeNode t8 = new TreeNode(8);
+//        t3.left = t5;
+//        t3.right = t1;
+//        t5.left = t6;
+//        t5.right = t2;
+//        t2.left = t7;
+//        t2.right = t4;
+//        t1.left = t0;
+//        t1.right = t8;
+//        Solution solution = new Solution();
+//        TreeNode treeNode = solution.lowestCommonAncestor(t3, t5, t2);
+//        System.out.println(treeNode.val);
+//    }
 
 }
 
