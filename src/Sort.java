@@ -1,4 +1,5 @@
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * @program: suanfa
@@ -75,7 +76,7 @@ public class Sort {
      * @param end
      * @return
      */
-    public static int[] qsort(int arr[], int start, int end) {
+    public static int[] qsort(int[] arr, int start, int end) {
         int pivot = arr[start];
         int i = start;
         int j = end;
@@ -93,8 +94,9 @@ public class Sort {
         }
         if (i - 1 > start) arr = qsort(arr, start, i - 1);
         if (j + 1 < end) arr = qsort(arr, j + 1, end);
-        return (arr);
+        return arr;
     }
+
 
     /**
      * 二叉树堆排序，使用数组表示
@@ -130,9 +132,38 @@ public class Sort {
         }
     }
 
+
+    public static int getAll(int[][] map) {
+        //获取业主家和设计师的位置
+        int[] owner = new int[2];
+        int[] designer = new int[2];
+        int[][] dp = new int[map.length][map[0].length];
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if (map[i][j] == 1) {
+                    owner[0] = i;
+                    owner[1] = j;
+                } else if (map[i][j] == 2) {
+                    designer[0] = i;
+                    designer[1] = j;
+                }
+            }
+        }
+        int a = owner[0];
+        int b = owner[1];
+        if (a == 0 || b == 0) {
+
+        }
+        if (a == map.length - 1 || b == map[0].length - 1) {
+
+        }
+        return 0;
+
+    }
+
     public static void main(String[] args) {
-        int[] a = {2, 3, 1, 5, 6, 6, 3, 5, 3, 26, 7, 23, 3};
-        InsertionSort(a);
+        int[] a = {6, 3, 1, 5, 6, 6, 3, 5, 3, 26, 7, 23, 3};
+        qsort(a, 0, a.length - 1);
         for (int i : a) {
             System.out.print(i + "-");
         }

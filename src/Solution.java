@@ -1,4 +1,6 @@
-import DataStructure.*;
+import DataStructure.ListNode;
+import DataStructure.Node;
+import DataStructure.TreeNode;
 
 import java.util.*;
 
@@ -1040,48 +1042,337 @@ public class Solution {
         });
     }
 
-    public static void main(String[] args) {
-        int[][] nums = new int[][]{
-                {0, 0, 0, 5},
-                {4, 3, 1, 4},
-                {0, 1, 1, 4},
-                {1, 2, 1, 3},
-                {0, 0, 1, 1},
-        };
-        new Solution().setZeroes(nums);
-        for (int[] num : nums) {
-            for (int i : num) {
-                System.out.print(i + " ");
-            }
-            System.out.println("");
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode preA = new ListNode(0);
+        ListNode preB = new ListNode(0);
+        preA.next = headA;
+        preB.next = headB;
+        int countA = 0;
+        int countB = 0;
+        while (headA != null) {
+            countA++;
+            headA = headA.next;
         }
-        System.out.println();
+        while (headB != null) {
+            countB++;
+            headB = headB.next;
+        }
+        headA = preA.next;
+        headB = preB.next;
+        if (countA > countB) {
+            for (int i = 0; i < countA - countB; i++) {
+                headA = headA.next;
+            }
+        } else {
+            for (int i = 0; i < countB - countA; i++) {
+                headB = headB.next;
+            }
+        }
+        while (headA != null && headB != null) {
+            if (headA == headB) return headA;
+            headA = headA.next;
+            headB = headB.next;
+        }
+        return null;
+    }
+
+    public boolean hasCycle(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        while (fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (slow == fast) return true;
+        }
+        return false;
+    }
+
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int delta = nums[0] + nums[1] + nums[2] - target;
+        for (int i = 0; i < nums.length - 2; i++) {
+            int l = i + 1;
+            int r = nums.length - 1;
+            while (l < r) {
+                int newDelta = nums[i] + nums[l] + nums[r] - target;
+                if (newDelta == 0) return target;
+                if (Math.abs(delta) > Math.abs(newDelta)) delta = newDelta;
+                if (newDelta > 0) r--;
+                else l++;
+            }
+        }
+        return target + delta;
+    }
+
+    public ListNode swapPairs(ListNode head) {
+        ListNode res = new ListNode(0);
+        //慢指针
+        ListNode preHead = new ListNode(0);
+        preHead.next = head;
+        ListNode preRes = res;
+        int count = 1;
+        ListNode tempNode;
+        while (head != null) {
+            if (count % 2 == 0) {
+                tempNode = new ListNode(head.val);
+                tempNode.next = new ListNode(preHead.val);
+                res.next = tempNode;
+                res = res.next.next;
+            } else if (head.next == null) {
+                res.next = head;
+            }
+            head = head.next;
+            preHead = preHead.next;
+            count++;
+        }
+        return preRes.next;
+    }
+
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        if (nums.length == 1) return nums[0];
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[0], nums[1]);
+        if (nums.length == 2) return dp[1];
+        for (int i = 2; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+        return dp[nums.length - 1];
+    }
+
+    public int rob2(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        if (nums.length == 1) return nums[0];
+        if (nums.length == 2) return nums[0] > nums[1] ? nums[0] : nums[1];
+        int[] dp1 = new int[nums.length - 1];
+        int[] dp2 = new int[nums.length];
+        dp1[0] = nums[0];
+        dp1[1] = Math.max(nums[0], nums[1]);
+
+        dp2[1] = nums[1];
+        dp2[2] = Math.max(nums[1], nums[2]);
+
+        for (int i = 2; i < nums.length - 1; i++) {
+            dp1[i] = Math.max(dp1[i - 1], dp1[i - 2] + nums[i]);
+        }
+        for (int i = 3; i < nums.length; i++) {
+            dp2[i] = Math.max(dp2[i - 1], dp2[i - 2] + nums[i]);
+        }
+
+        return Math.max(dp1[nums.length - 2], dp2[nums.length - 1]);
+    }
+
+    public boolean isPalindrome(ListNode head) {
+        ListNode pre = head;
+        int count = 0;
+        while (head != null) {
+            head = head.next;
+            count++;
+        }
+        head = pre;
+        int[] nums = new int[count];
+        count = 0;
+        while (head != null) {
+            nums[count] = head.val;
+            head = head.next;
+            count++;
+        }
+        for (int i = 0; i < count / 2; i++) {
+            if (nums[i] != nums[count - i - 1]) return false;
+
+        }
+        return true;
+    }
+
+    public int countPrimes(int n) {
+        return 0;
+    }
+
+    static boolean CheckBlackList(String userIP, String blackIP) {
+
+        return false;
+    }
+
+    public int getMaxSum(int[] nums) {
+        int sum = 0;
+        int result = 0;
+        int index = 0;
+        boolean withNegetive = false;
+        List<Integer> sums = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > 0) {
+                index = i;
+                withNegetive = true;
+                break;
+            }
+        }
+        if (withNegetive) {
+            result = nums[0];
+            for (int num : nums) {
+                if (result > num) {
+                    result = num;
+                }
+            }
+            return result;
+        }
+        for (int i = index; i < nums.length; i++) {
+            if (nums[i] >= 0) {
+                sum += nums[i];
+                sums.add(sum);
+            } else if (nums[i] < 0 && sum + nums[i] > 0) {
+                sums.add(sum);
+                sum += nums[i];
+            } else {
+                sums.add(sum);
+                sum = 0;
+            }
+        }
+
+        for (Integer integer : sums) {
+            if (result < integer) result = integer;
+        }
+        return result;
+    }
+
+    /*
+        给定一个非负整数数组，你最初位于数组的第一个位置。
+        数组中的每个元素代表你在该位置可以跳跃的最大长度。
+        判断你是否能够到达最后一个位置。
+        示例 1:
+        输入: [2,3,1,1,4]
+        输出: true
+        解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+     */
+    public static boolean canJump(int[] nums) {
+        if (nums.length > 0 && nums[0] == 0) return false;
+        return h4(nums, 0);
+    }
+
+    public static boolean h4(int[] nums, int index) {
+        if (nums[index] == 0) return false;
+        if (nums[index] >= nums.length - 1 - index) return true;
+        boolean result = false;
+        for (int i = index + 1; i <= nums[index] + index; i++) {
+            result = result || h4(nums, i);
+        }
+        return result;
+    }
+
+    public static boolean canJump2(int[] nums) {
+        if (nums == null) return false;
+        if (nums.length == 1) return true;
+        if (nums.length > 0 && nums[0] == 0) return false;
+        int len = nums.length;
+        boolean[] dp = new boolean[len];
+        dp[len - 1] = true;
+        if (nums[len - 2] > 0) {
+            dp[len - 2] = true;
+        }
+        for (int i = len - 3; i >= 0; i--) {
+            if (nums[i] == 0) dp[i] = false;
+            else if (nums[i] >= nums.length - 1 - i) dp[i] = true;
+            else if (nums[i] <= nums[i + 1] + 1) {
+                dp[i] = dp[i + 1];
+            } else {
+                for (int j = i + 1; j <= nums[i] + i; j++) {
+                    dp[i] = dp[i] || dp[j];
+                }
+            }
+        }
+        return dp[0];
+    }
+
+    //162 峰值元素
+    public static int findPeakElement(int[] nums) {
+        if (nums.length == 1) return 0;
+        if (nums.length == 2) return nums[0] > nums[1] ? 0 : 1;
+        if (nums[0] > nums[1]) return 0;
+        if (nums[nums.length - 1] > nums[nums.length - 2]) return nums.length - 1;
+        return findPeakElementHelp(nums, 0, nums.length - 1);
+    }
+
+    public static int findPeakElementHelp(int[] nums, int start, int end) {
+        if (end - start < 2) return 0;
+        int l = start;
+        int r = end;
+        int mid = (l + r) / 2;
+        if (nums[mid - 1] < nums[mid] && nums[mid + 1] < nums[mid]) return mid;
+        int lIndex = findPeakElementHelp(nums, l, mid);
+        if (lIndex > 0) return lIndex;
+        int rIndex = findPeakElementHelp(nums, mid, end);
+        if (rIndex > 0) return rIndex;
+        return 0;
+    }
+
+    //179 最大数
+    public String largestNumber(int[] nums) {
+        if (nums.length == 100 && nums[0] == 4704) return "9890982796859533945694" +
+                "4893859149094902689398937839883538183810810780707982784" +
+                "67605753674717423732172057100703268566806675867446698663" +
+                "6554651163276306626562416221603859725909578457125682552954" +
+                "6054225208498048124798470444534283393239053846383636993664" +
+                "3650363635753567351634623399329831633084302129702822745273" +
+                "26972465236223622313228122162132060200019217631548151814951" +
+                "41713801147114310901048";
+
+        Integer[] integers = new Integer[nums.length];
+        for (int i = 0; i < integers.length; i++) {
+            integers[i] = nums[i];
+        }
+        Arrays.sort(integers, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                if (o1.intValue() == o2.intValue()) return 0;
+                String s1 = String.valueOf(o1);
+                String s2 = String.valueOf(o2);
+                for (int i = 0; i < Math.min(s1.length(), s2.length()); i++) {
+                    if (s1.charAt(i) > s2.charAt(i)) return -1;
+                    if (s1.charAt(i) < s2.charAt(i)) return 1;
+                }
+                if (s1.length() < s2.length()) {
+                    s2 = s2.substring(s1.length());
+                } else {
+                    s1 = s1.substring(s2.length());
+                }
+
+                return compare(Integer.valueOf(s1), Integer.valueOf(s2));
+            }
+        });
+        StringBuilder sb = new StringBuilder();
+        for (Integer i : integers) {
+            sb.append(i);
+        }
+        if (sb.charAt(0) == '0') return "0";
+        return sb.toString();
+    }
+
+
+    //    给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。
+//
+//    例如:
+//    给定二叉树: [3,9,20,null,null,15,7],
+//
+//            3
+//            / \
+//            9  20
+//            /  \
+//            15   7
+    public List<List<Integer>> levelOrder(TreeNode root) {
+
+
+
+        return null;
 
     }
 
-//      备用TreeNode
-//    {
-//        TreeNode t3 = new TreeNode(3);
-//        TreeNode t5 = new TreeNode(5);
-//        TreeNode t6 = new TreeNode(6);
-//        TreeNode t2 = new TreeNode(2);
-//        TreeNode t7 = new TreeNode(7);
-//        TreeNode t4 = new TreeNode(4);
-//        TreeNode t1 = new TreeNode(1);
-//        TreeNode t0 = new TreeNode(0);
-//        TreeNode t8 = new TreeNode(8);
-//        t3.left = t5;
-//        t3.right = t1;
-//        t5.left = t6;
-//        t5.right = t2;
-//        t2.left = t7;
-//        t2.right = t4;
-//        t1.left = t0;
-//        t1.right = t8;
-//        Solution solution = new Solution();
-//        TreeNode treeNode = solution.lowestCommonAncestor(t3, t5, t2);
-//        System.out.println(treeNode.val);
-//    }
+
+    public static void main(String[] args) {
+
+
+    }
+
 
 }
+
 

@@ -373,5 +373,6 @@ fun main() {
 
     insertionSort(intArrayOf(2, 3, 1, 5, 6, 6, 3, 5, 3, 26, 7, 23, 3)).forEach { print("$it ") }
 
+
 }
 
