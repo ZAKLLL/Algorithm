@@ -1,8 +1,11 @@
 import DataStructure.ListNode;
 import DataStructure.Node;
+import DataStructure.Node2;
 import DataStructure.TreeNode;
 
+import javax.swing.text.html.StyleSheet;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @program: suanfa
@@ -1359,17 +1362,123 @@ public class Solution {
 //            /  \
 //            15   7
     public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> res = new LinkedList<>();
+        if (root == null) return res;
+        Queue<TreeNode> queue = new LinkedBlockingQueue<>();
+        queue.add(root);
 
+        while (queue.size() > 0) {
+            int count = queue.size();
+            List<Integer> list = new ArrayList<Integer>();
+            //count记录每一层的数量
+            while (count > 0) {
+                TreeNode poll = queue.poll();
+                if (poll.right != null) queue.add(poll.right);
+                if (poll.left != null) queue.add(poll.left);
+                list.add(poll.val);
+                count--;
+            }
+            res.add(list);
+        }
+        return res;
+    }
 
+    //429. N叉树的层序
+    public List<List<Integer>> levelOrder(Node2 root) {
 
-        return null;
+        List<List<Integer>> res = new LinkedList<>();
+        if (root == null) return res;
+        Queue<Node2> queue = new LinkedBlockingQueue<>();
+        queue.add(root);
+
+        while (queue.size() > 0) {
+            int count = queue.size();
+            List<Integer> list = new ArrayList<Integer>();
+            //count记录每一层的数量
+            while (count > 0) {
+                Node2 poll = queue.poll();
+                queue.addAll(poll.children);
+                list.add(poll.val);
+                count--;
+            }
+            res.add(list);
+        }
+        return res;
+    }
+
+    //103 二叉树的锯齿形层次遍历
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> res = new LinkedList<>();
+        if (root == null) return res;
+        Queue<TreeNode> queue = new LinkedBlockingQueue<>();
+        queue.add(root);
+        boolean fromLeft = false;
+        Stack<TreeNode> stack = new Stack<>();
+        while (queue.size() > 0) {
+            int count = queue.size();
+            List<Integer> list = new ArrayList<>();
+            while (count > 0) {
+                stack.clear();
+                while (count > 0) {
+                    TreeNode poll = queue.poll();
+                    stack.push(poll);
+                    count--;
+                    list.add(poll.val);
+                }
+                if (fromLeft) {
+                    while (stack.size() > 0) {
+                        TreeNode pop = stack.pop();
+                        if (pop.left != null) queue.add(pop.left);
+                        if (pop.right != null) queue.add(pop.right);
+                    }
+                    fromLeft = false;
+                } else {
+                    while (stack.size() > 0) {
+                        TreeNode pop = stack.pop();
+                        if (pop.right != null) queue.add(pop.right);
+                        if (pop.left != null) queue.add(pop.left);
+                    }
+                    fromLeft = true;
+                }
+            }
+            res.add(list);
+        }
+        return res;
+    }
+
+    // 240搜索二维矩阵
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int i = 0;
+        int j = matrix[0].length - 1;
+        while (i < matrix.length && j >= 0) {
+            int temp = matrix[i][j];
+            if (temp == target) return true;
+            if (matrix[i][j] < target) i++;
+            else j--;
+        }
+        return false;
+    }
+    public List<Integer> rightSideView(TreeNode root) {
 
     }
 
 
     public static void main(String[] args) {
+        TreeNode t1 = new TreeNode(1);
+        TreeNode t2 = new TreeNode(2);
+        TreeNode t3 = new TreeNode(3);
+        t1.left = t2;
+        t1.right = t3;
+        TreeNode t4 = new TreeNode(4);
+        TreeNode t5 = new TreeNode(5);
+        t2.left = t4;
+        t3.right = t5;
 
+        for (List<Integer> integers : new Solution().zigzagLevelOrder(t1)) {
+            integers.forEach(i -> System.out.print(i + " "));
+            System.out.println("\n");
 
+        }
     }
 
 
