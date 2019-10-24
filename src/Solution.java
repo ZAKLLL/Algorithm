@@ -160,7 +160,6 @@ public class Solution {
                 res[highPos] += temp / 10; //这里高位不要取mod
             }
         }
-
         StringBuilder sb = new StringBuilder();
         for (int i : res) {
             if (!(sb.length() == 0) && i == 0) sb.append(i);
@@ -1446,6 +1445,10 @@ public class Solution {
         return res;
     }
 
+    public int numSquares(int n) {
+        return 0;
+    }
+
     // 240搜索二维矩阵
     public boolean searchMatrix(int[][] matrix, int target) {
         int i = 0;
@@ -1458,10 +1461,85 @@ public class Solution {
         }
         return false;
     }
-    public List<Integer> rightSideView(TreeNode root) {
 
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null) return res;
+        Queue<TreeNode> queue = new LinkedBlockingQueue<>();
+        queue.add(root);
+        int count;
+        int temp = 0;
+        while (queue.size() > 0) {
+            count = queue.size();
+            while (count > 0) {
+                TreeNode poll = queue.poll();
+                if (poll.left != null) queue.add(poll.left);
+                if (poll.right != null) queue.add(poll.right);
+                count--;
+                temp = poll.val;
+            }
+            res.add(temp);
+        }
+        return res;
     }
 
+    public void flatten(TreeNode root) {
+        if (root == null) return;
+        flatten(root.left);
+        flatten(root.right);
+        TreeNode tempNode = root.right;
+        root.right = root.left;
+        root.left = null;
+        while (root.right != null) root = root.right;
+        root.right = tempNode;
+    }
+
+    public int minDepth(TreeNode root) {
+        if (root == null) return 0;
+        if (root.left != null && root.right == null) {
+            return minDepth(root.left);
+        }
+        if (root.right != null && root.left == null) {
+            return minDepth(root.right);
+        }
+        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
+    }
+
+    public int sumOfLeftLeaves(TreeNode root) {
+        if (root == null) return 0;
+        TreeNode l = root.left;
+        TreeNode r = root.right;
+        if (l == null) return sumOfLeftLeaves(r);
+        if (l.left == null && l.right == null) {
+            return l.val + sumOfLeftLeaves(r);
+        } else {
+            return sumOfLeftLeaves(l) + sumOfLeftLeaves(r);
+        }
+    }
+
+    //347 前K个高频元素
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        Arrays.sort(nums);
+        int a = nums[0];
+        List<Integer> res = new LinkedList<>();
+        if (k == 0) return res;
+        res.add(a);
+        for (int i = 1; i < nums.length; i++) {
+            if (a != nums[i]) {
+                a = nums[i];
+                res.add(a);
+                count++;
+                if (count == k) return res;
+            }
+        }
+        return res;
+    }
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+
+
+        return null;
+    }
 
     public static void main(String[] args) {
         TreeNode t1 = new TreeNode(1);
@@ -1472,13 +1550,9 @@ public class Solution {
         TreeNode t4 = new TreeNode(4);
         TreeNode t5 = new TreeNode(5);
         t2.left = t4;
-        t3.right = t5;
+        t3.left = t5;
 
-        for (List<Integer> integers : new Solution().zigzagLevelOrder(t1)) {
-            integers.forEach(i -> System.out.print(i + " "));
-            System.out.println("\n");
-
-        }
+        System.out.println(new Solution().sumOfLeftLeaves(t1));
     }
 
 

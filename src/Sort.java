@@ -132,35 +132,7 @@ public class Sort {
         }
     }
 
-
-    public static int getAll(int[][] map) {
-        //获取业主家和设计师的位置
-        int[] owner = new int[2];
-        int[] designer = new int[2];
-        int[][] dp = new int[map.length][map[0].length];
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[0].length; j++) {
-                if (map[i][j] == 1) {
-                    owner[0] = i;
-                    owner[1] = j;
-                } else if (map[i][j] == 2) {
-                    designer[0] = i;
-                    designer[1] = j;
-                }
-            }
-        }
-        int a = owner[0];
-        int b = owner[1];
-        if (a == 0 || b == 0) {
-
-        }
-        if (a == map.length - 1 || b == map[0].length - 1) {
-
-        }
-        return 0;
-
-    }
-
+    
     public static void main(String[] args) {
         int[] a = {6, 3, 1, 5, 6, 6, 3, 5, 3, 26, 7, 23, 3};
         qsort(a, 0, a.length - 1);
