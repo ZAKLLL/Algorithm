@@ -3,9 +3,10 @@ import DataStructure.Node;
 import DataStructure.Node2;
 import DataStructure.TreeNode;
 
-import javax.swing.text.html.StyleSheet;
+import javax.swing.Timer;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: suanfa
@@ -841,7 +842,7 @@ public class Solution {
         return dp[m - 1][n - 1];
     }
 
-    public String longestPalindrome(String s) {
+    public String longestPalindrome1(String s) {
         if (s.length() == 1) return s;
         boolean[][] dp = new boolean[s.length()][s.length()];
         String res = "";
@@ -1535,24 +1536,317 @@ public class Solution {
         return res;
     }
 
-    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null && t2 == null) return null;
+        TreeNode root;
+        if (t1 == null) {
+            root = new TreeNode(t2.val);
+        } else if (t2 == null) {
+            root = new TreeNode(t1.val);
+        } else {
+            root = new TreeNode(t1.val + t2.val);
+        }
+        root.left = mergeTrees((t1 == null) ? null : t1.left, t2 == null ? null : t2.left);
+        root.right = mergeTrees(t1 == null ? null : t1.right, t2 == null ? null : t2.right);
+        return root;
+    }
 
 
-        return null;
+    // 538 二叉树转成累加树
+    //pre： LDR 中序是有序的
+    //after: RDL 反过来是有序的
+    int add = 0;
+
+    public TreeNode convertBST(TreeNode root) {
+        if (root == null) return null;
+        convertBST(root.right);
+        root.val += add;
+        add = root.val;
+        convertBST(root.left);
+        return root;
+    }
+
+
+    public int hammingDistance(int x, int y) {
+        return Integer.bitCount(x ^ y);
+    }
+
+
+    int max = 0;
+
+    public int diameterOfBinaryTree(TreeNode root) {
+        if (root == null) return 0;
+        max = Math.max(max, (heightOfTree(root.left) + heightOfTree(root.right)));
+        diameterOfBinaryTree(root.left);
+        diameterOfBinaryTree(root.right);
+        return max;
+    }
+
+    public int heightOfTree(TreeNode root) {
+        return root == null ? 0 : Math.max(heightOfTree(root.left), heightOfTree(root.right)) + 1;
+    }
+
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        List<Integer> res = new LinkedList<>();
+        for (int i = 0; i < nums.length; i++) {
+            //将所有的出现过的数本应该在的位置标志为负数
+            nums[Math.abs(nums[i]) - 1] = -Math.abs(nums[Math.abs(nums[i]) - 1]);
+        }
+        for (int i = 0; i < nums.length; i++) {
+            //取出正数的位置,说明本属于该整数位置的数尚未被标记
+            if (nums[i] > 0) res.add(i + 1);
+        }
+        return res;
+    }
+
+
+    public int[] countBits(int num) {
+        int[] res = new int[num + 1];
+        int a;
+        int count;
+        for (int i = 0; i <= num; i++) {
+            a = i;
+            count = 0;
+            while (a > 0) {
+                if ((a % 2) == 1) {
+                    count++;
+                }
+                a >>= 1;
+            }
+            res[i] = count;
+        }
+        return res;
+    }
+
+    public int pathSum(TreeNode root, int sum) {
+        if (root == null) return 0;
+        int count = 0;
+        count += h11(root, sum);
+        count += pathSum(root.left, sum);
+        count += pathSum(root.right, sum);
+        return count;
+    }
+
+    //返回根节点为向下目标为sum值的
+    public int h11(TreeNode root, int sum) {
+        if (root == null) return 0;
+        int res = 0;
+        if (root.val == sum) {
+            res += 1;
+        }
+        res += h11(root.left, sum - root.val);
+        res += h11(root.right, sum - root.val);
+        return res;
+    }
+
+    public void nextPermutation(int[] nums) {
+        int a = nums[nums.length - 1];
+        int index = nums.length - 1;
+
+        for (int i = nums.length - 1; i >= 0; i--) {
+            if (nums[i] < a) {
+                index = i;
+                break;
+            }
+        }
+        if (index == nums.length - 1) Arrays.sort(nums);
+        int b = nums[index];
+
+        if (nums.length - 1 - index >= 0) System.arraycopy(nums, index + 1, nums, index, nums.length - 1 - index);
+        nums[nums.length - 1] = b;
+    }
+
+    /*
+    根据每日 气温 列表，请重新生成一个列表，对应位置的输入是你需要再等待多久温度才会升高超过该日的天数。如果之后都不会升高，请在该位置用 0 来代替。
+    例如，给定一个列表 temperatures = [73, 74, 75, 71, 69, 72, 76, 73]，你的输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]。
+     */
+    public static int[] dailyTemperatures(int[] T) {
+        int[] res = new int[T.length];
+        for (int i = 0; i < T.length - 1; i++) {
+            for (int j = i + 1; j < T.length; j++) {
+                if (T[j] > T[i]) {
+                    res[i] = j - i;
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        h13(image, sr, sc, newColor, image[sr][sc]);
+        return image;
+    }
+
+    public void h13(int[][] image, int sr, int sc, int newColor, int oldColor) {
+        if (sr < 0 || sr >= image.length || sc < 0 || sc >= image[0].length || image[sr][sc] == newColor) {
+            return;
+        }
+        if (image[sr][sc] == oldColor) image[sr][sc] = newColor;
+        else return;
+        h13(image, sr - 1, sc, newColor, oldColor);
+        h13(image, sr + 1, sc, newColor, oldColor);
+        h13(image, sr, sc - 1, newColor, oldColor);
+        h13(image, sr, sc + 1, newColor, oldColor);
+    }
+
+    public static String toGoatLatin(String S) {
+        String[] strs = S.split(" ");
+        for (int i = 0; i < strs.length; i++) {
+            char c = strs[i].charAt(0);
+            if (c == 'a' || c == 'A' || c == 'e' || c == 'E' || c == 'i' || c == 'I' || c == 'o' || c == 'O' || c == 'u' || c == 'U') {
+                strs[i] = strs[i] + "ma";
+            } else {
+                strs[i] = strs[i].substring(1) + c + "ma";
+            }
+            for (int j = 0; j <= i; j++) {
+                strs[i] += "a";
+            }
+        }
+        String s = Arrays.toString(strs).replaceAll(",", "");
+        return s.substring(1, s.length() - 1);
+    }
+
+    public int game(int[] guess, int[] answer) {
+        int res = 0;
+        if (guess[0] == answer[0]) res++;
+        if (guess[1] == answer[1]) res++;
+        if (guess[2] == answer[2]) res++;
+        return res;
+    }
+
+    public int findTargetSumWays(int[] nums, int S) {
+
+        return 0;
+    }
+
+    public static int lengthOfLIS(int[] nums) {
+        if (nums.length == 0) return 0;
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
+        int tempMax;
+        for (int i = 1; i < nums.length; i++) {
+            tempMax = 0;
+            for (int j = i - 1; j >= 0; j--) {
+                if (nums[i] > nums[j]) {
+                    tempMax = Math.max(tempMax, dp[j]);
+                }
+            }
+            dp[i] = tempMax + 1;
+        }
+        int res = 0;
+        for (int i : dp) {
+            if (i > res) res = i;
+        }
+        return res;
+    }
+
+    //771 宝石与石头
+    public int numJewelsInStones(String J, String S) {
+        int res = 0;
+        for (int i = 0; i < S.length(); i++)
+            if (J.indexOf(S.charAt(i)) != -1) res++;
+        return res;
+    }
+
+    public String longestCommonPrefix(String[] strs) {
+        if (strs.length == 0) return "";
+        int index = 0;
+        int length = strs[0].length();
+        for (int i = 0; i < strs.length; i++) {
+            if (strs[i].length() < length) {
+                length = strs[i].length();
+                index = i;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        String shortest = strs[index];
+        outer:
+        for (int i = 0; i < shortest.length(); i++) {
+            char c = shortest.charAt(i);
+            for (String str : strs) {
+                if (str.charAt(i) != c) break outer;
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    // 409 最长字符串
+    public static int longestPalindrome(String s) {
+        int[] count = new int[128];
+        int res = 0;
+        for (char c : s.toCharArray()) {
+            if (++count[c] == 2) {
+                res++;
+                count[c] = 0;
+            }
+        }
+        return res * 2 < s.length() ? res * 2 + 1 : res * 2;
+    }
+
+    public static String gcdOfStrings(String str1, String str2) {
+        if (!(str1 + str2).equals(str2 + str1)) return "";
+        else
+            return (str1 + str2).substring(0, gcd(Math.max(str1.length(), str2.length()), Math.min(str1.length(), str2.length())));
+    }
+
+    //欧几里得求最大公因数
+    public static int gcd(int a, int b) {
+        if (a % b == 0) return b;
+        else return gcd(b, a % b);
+    }
+
+    public static int numSpecialEquivGroups(String[] A) {
+        int res=0;
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] != null) {
+                for (int j = 0; j < A.length; j++) {
+                    if (A[j] != null && j != i) {
+                        if (eq(A[i], A[j])) {
+                            A[j] = null;
+                        }
+                    }
+                }
+                A[i] = null;
+                res++;
+            }
+        }
+        return res;
+    }
+
+    public static boolean eq(String a, String b) {
+        if (a.equals(b)) return true;
+        if (a.length() != b.length()) return false;
+        //a的偶数位集合 and b的偶数位集合 分别相等即可
+        StringBuilder odda=new StringBuilder();
+        StringBuilder oddb=new StringBuilder();
+        StringBuilder evena=new StringBuilder();
+        StringBuilder evenb = new StringBuilder();
+        for (int i = 0; i < a.length(); i++) {
+            if (i % 2 == 0) {
+                evena.append(a.charAt(i));
+                evenb.append(b.charAt(i));
+            } else {
+                odda.append(a.charAt(i));
+                oddb.append(b.charAt(i));
+            }
+        }
+        char[] charsa = odda.toString().toCharArray();
+        char[] charsb = oddb.toString().toCharArray();
+        char[] charsa2 = evena.toString().toCharArray();
+        char[] charsb2 = evenb.toString().toCharArray();
+        Arrays.sort(charsa);
+        Arrays.sort(charsb);
+        Arrays.sort(charsa2);
+        Arrays.sort(charsb2);
+        return String.valueOf(charsa).equals(String.valueOf(charsb)) && String.valueOf(charsa2).equals(String.valueOf(charsb2));
     }
 
     public static void main(String[] args) {
-        TreeNode t1 = new TreeNode(1);
-        TreeNode t2 = new TreeNode(2);
-        TreeNode t3 = new TreeNode(3);
-        t1.left = t2;
-        t1.right = t3;
-        TreeNode t4 = new TreeNode(4);
-        TreeNode t5 = new TreeNode(5);
-        t2.left = t4;
-        t3.left = t5;
+        String[] strings = new String[]{"abcd","cdab","adcb","cbad"};
+        System.out.println(numSpecialEquivGroups(strings));
 
-        System.out.println(new Solution().sumOfLeftLeaves(t1));
     }
 
 
