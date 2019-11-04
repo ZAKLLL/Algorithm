@@ -3,10 +3,8 @@ import DataStructure.Node;
 import DataStructure.Node2;
 import DataStructure.TreeNode;
 
-import javax.swing.Timer;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @program: suanfa
@@ -1798,7 +1796,7 @@ public class Solution {
     }
 
     public static int numSpecialEquivGroups(String[] A) {
-        int res=0;
+        int res = 0;
         for (int i = 0; i < A.length; i++) {
             if (A[i] != null) {
                 for (int j = 0; j < A.length; j++) {
@@ -1819,9 +1817,9 @@ public class Solution {
         if (a.equals(b)) return true;
         if (a.length() != b.length()) return false;
         //a的偶数位集合 and b的偶数位集合 分别相等即可
-        StringBuilder odda=new StringBuilder();
-        StringBuilder oddb=new StringBuilder();
-        StringBuilder evena=new StringBuilder();
+        StringBuilder odda = new StringBuilder();
+        StringBuilder oddb = new StringBuilder();
+        StringBuilder evena = new StringBuilder();
         StringBuilder evenb = new StringBuilder();
         for (int i = 0; i < a.length(); i++) {
             if (i % 2 == 0) {
@@ -1843,13 +1841,246 @@ public class Solution {
         return String.valueOf(charsa).equals(String.valueOf(charsb)) && String.valueOf(charsa2).equals(String.valueOf(charsb2));
     }
 
-    public static void main(String[] args) {
-        String[] strings = new String[]{"abcd","cdab","adcb","cbad"};
-        System.out.println(numSpecialEquivGroups(strings));
+    public static int rangeBitwiseAnd(int m, int n) {
+        /*
+        5:0 1 0 1
+        6:0 1 1 0
+        7:0 1 1 1
+        -----------
+          0 1 0 0
+         */
+        int count = 0;
+        while (n != m) {
+            n >>= 1;
+            m >>= 1;
+            count++;
+        }
+        return n << count;
+    }
 
+    public static List<List<Integer>> threeSum(int[] nums) {
+        Set<List<Integer>> res = new HashSet<>();
+        Arrays.sort(nums);
+        if (nums.length < 3) {
+            return new ArrayList<>();
+        }
+        if (nums.length == 3) {
+            if ((nums[0] + nums[1] + nums[2]) == 0) {
+                res.add(Arrays.asList(nums[0], nums[1], nums[2]));
+            }
+            return new ArrayList<>(res);
+        }
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (nums[i] > 0) break;
+            int l = i + 1, r = nums.length - 1;
+            while (l < r) {
+                int sum = nums[i] + nums[l] + nums[r];
+                if (sum == 0) {
+                    List<Integer> tempList = new LinkedList<>();
+                    tempList.add(nums[i]);
+                    tempList.add(nums[l]);
+                    tempList.add(nums[r]);
+                    res.add(tempList);
+                    l++;
+                    r--;
+                } else if (sum > 0) {
+                    r--;
+                } else {
+                    l++;
+                }
+            }
+        }
+        return new ArrayList<>(res);
+    }
+
+    public static List<List<Integer>> fourSum(int[] nums, int target) {
+        HashSet<List<Integer>> set = new HashSet<>();
+        List<Integer> tempList;
+        if (nums.length < 4) return new ArrayList<>();
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 3; i++) {
+            int sum = target - nums[i];
+            for (int j = i + 1; j < nums.length; j++) {
+                int l = j + 1, r = nums.length - 1;
+                while (l < r) {
+                    int sum2 = nums[j] + nums[l] + nums[r];
+                    if (sum2 == sum) {
+                        tempList = new ArrayList<>();
+                        tempList.add(nums[i]);
+                        tempList.add(nums[j]);
+                        tempList.add(nums[l]);
+                        tempList.add(nums[r]);
+                        set.add(tempList);
+                        l++;
+                        r--;
+                    } else if (sum2 > sum) {
+                        r--;
+                    } else {
+                        l++;
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(set);
+    }
+
+    public int search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return -1;
+        return search(nums, 0, nums.length - 1, target);
+    }
+
+    public int search(int[] nums, int left, int right, int target) {
+        if (left == right) {
+            if (nums[left] == target) {
+                return left;
+            } else {
+                return -1;
+            }
+        }
+        //将数组分割
+        int tempmid = (left + right) / 2;
+        //左半边有序
+        if (nums[tempmid] > nums[right]) {
+            int search = search(nums, tempmid + 1, right, target);
+            if (search != -1) return search;
+            //在左边二分法查找
+            while (left <= tempmid) {
+                int mid = (left + tempmid) / 2;
+                if (nums[mid] == target) {
+                    return mid;
+                } else if (target > nums[mid]) {
+                    left = mid + 1;
+                } else {
+                    tempmid = mid - 1;
+                }
+            }
+        } else {
+            int search = search(nums, left, tempmid, target);
+            if (search != -1) return search;
+            while (tempmid <= right) {
+                int mid = (tempmid + tempmid) / 2;
+                if (nums[mid] == target) {
+                    return mid;
+                } else if (target > nums[mid]) {
+                    tempmid = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            //在左边递归
+        }
+        return -1;
     }
 
 
+    public List<List<Integer>> res2;
+    public Stack<Integer> integerStack;
+    public boolean[] used;
+
+
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        res2 = new ArrayList<>();
+        integerStack = new Stack<>();
+        h13(nums);
+        return res2;
+    }
+
+    public void h13(int[] nums) {
+
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) {
+                continue;
+            }
+
+            if (!used[i]) {
+                integerStack.push(nums[i]);
+                used[i] = true;
+                h13(nums);
+                used[i] = false;
+                integerStack.pop();
+            }
+        }
+    }
+
+    //54. 螺旋矩阵
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> integers = new ArrayList<>();
+        if (matrix == null || matrix.length == 0) return integers;
+        h15(matrix, 0, 0, 3, integers);
+        return integers;
+    }
+
+    public void h15(int[][] matrix, int x, int y, int pos, List<Integer> integers) {
+        if (x < 0 || x > matrix.length - 1 || y < 0 || y > matrix[0].length - 1 || matrix[x][y] == Integer.MAX_VALUE) return;
+        switch (pos) {
+            //上
+            case 0:
+                for (int i = x; i >= 0; i--) {
+                    if (matrix[i][y] == Integer.MAX_VALUE) {
+                        h15(matrix, i + 1, y + 1, 3, integers);
+                        break;
+                    } else {
+                        integers.add(matrix[i][y]);
+                        matrix[i][y] = Integer.MAX_VALUE;
+                    }
+                }
+                break;
+            case 1:
+                for (int i = x; i < matrix.length; i++) {
+                    if (matrix[i][y] == Integer.MAX_VALUE) {
+                        h15(matrix, i - 1, y - 1, 2, integers);
+                        break;
+                    } else if (i == matrix.length - 1) {
+                        h15(matrix, matrix.length - 1, matrix[0].length - 1, 2, integers);
+                        break;
+                    } else {
+                        integers.add(matrix[i][y]);
+                        matrix[i][y] = Integer.MAX_VALUE;
+                    }
+                }
+                break;
+            case 2:
+                for (int i = y; i >= 0; i--) {
+                    if (matrix[x][i] == Integer.MAX_VALUE) {
+                        h15(matrix, x - 1, i + 1, 0, integers);
+                        break;
+                    } else if (i == 0) {
+                        h15(matrix, matrix.length - 1, 0, 0, integers);
+                        break;
+                    } else {
+                        integers.add(matrix[x][i]);
+                        matrix[x][i] = Integer.MAX_VALUE;
+                    }
+                }
+                break;
+            case 3:
+                for (int i = y; i < matrix[0].length; i++) {
+                    if (matrix[x][i] == Integer.MAX_VALUE) {
+                        h15(matrix, x + 1, i - 1, 1, integers);
+                        break;
+                    } else if (i == matrix[0].length - 1) {
+                        h15(matrix, 0, matrix[0].length - 1, 1, integers);
+                        break;
+                    } else {
+                        integers.add(matrix[x][i]);
+                        matrix[x][i] = Integer.MAX_VALUE;
+                    }
+                }
+                break;
+        }
+    }
+
+
+    public static void main(String[] args) {
+        int[][] martix = new int[][]{
+                {1, 2, 3, 4, 5},
+                {1, 2, 3, 4, 5},
+                {1, 2, 3, 4, 5},
+        };
+
+        new Solution().spiralOrder(martix).forEach(i -> System.out.print(i + " "));
+    }
 }
+
 
 

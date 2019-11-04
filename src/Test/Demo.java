@@ -1,6 +1,7 @@
 package Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @program: suanfa
@@ -8,41 +9,33 @@ import java.util.*;
  * @author: ZakL
  * @create: 2019-10-10 14:52
  **/
-public class Demo {
-    public static void main(String[] args) {
-        Collection<?>[] collections =
-                {new HashSet<String>(), new ArrayList<String>(), new HashMap<String, String>().values()};
-        Super subToSuper = new Sub();
-        for (Collection<?> collection : collections) {
-            System.out.println(subToSuper.getType(collection));
+public class Demo implements Runnable {
+    public Integer i = 0;
+
+    public final Object lock = new Object();
+
+    @Override
+    public void run() {
+        synchronized (i) {
+            for (int j = 0; j < 1_000_000; j++) {
+                i++;
+            }
         }
     }
 
-    abstract static class Super {
-        public static String getType(Collection<?> collection) {
-            return "Super: collection";
-        }
 
-        public static String getType(List<?> list) {
-            return "Super: list";
-        }
 
-        public String getType(ArrayList<?> list) {
-            return "Super:arrayList";
-        }
+    public static void main(String[] args) throws InterruptedException {
+        Demo demo = new Demo();
+        Thread thread1 = new Thread(demo);
+        Thread thread2 = new Thread(demo);
+        thread1.start();
+        thread1.join();
+        thread2.start();
+        thread2.join();
+        System.out.println(demo.i);
 
-        public static String getType(Set<?> set) {
-            return "Super: set";
-        }
-
-        public String getType(HashSet<?> set) {
-            return "Super: hashSet";
-        }
-    }
-
-    static class Sub extends Super {
-        public static String getType(Collection<?> collection) {
-            return "Sub";
-        }
     }
 }
+
+
