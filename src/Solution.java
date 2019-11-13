@@ -3,6 +3,7 @@ import DataStructure.Node;
 import DataStructure.Node2;
 import DataStructure.TreeNode;
 
+import java.awt.image.renderable.RenderableImage;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -44,10 +45,6 @@ public class Solution {
         return dummy.next;
     }
 
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-
-        return 0;
-    }
 
     public void solve(char[][] board) {
         if (board.length == 0) return;
@@ -1449,7 +1446,7 @@ public class Solution {
     }
 
     // 240搜索二维矩阵
-    public boolean searchMatrix(int[][] matrix, int target) {
+    public boolean searchMatrix1(int[][] matrix, int target) {
         int i = 0;
         int j = matrix[0].length - 1;
         while (i < matrix.length && j >= 0) {
@@ -1941,6 +1938,7 @@ public class Solution {
         int tempmid = (left + right) / 2;
         //左半边有序
         if (nums[tempmid] > nums[right]) {
+            //右半边递归
             int search = search(nums, tempmid + 1, right, target);
             if (search != -1) return search;
             //在左边二分法查找
@@ -1955,10 +1953,11 @@ public class Solution {
                 }
             }
         } else {
+            //左半边递归
             int search = search(nums, left, tempmid, target);
             if (search != -1) return search;
-            while (tempmid <= right) {
-                int mid = (tempmid + tempmid) / 2;
+            while (tempmid < right) {
+                int mid = (tempmid + right) / 2;
                 if (nums[mid] == target) {
                     return mid;
                 } else if (target > nums[mid]) {
@@ -1967,120 +1966,826 @@ public class Solution {
                     right = mid - 1;
                 }
             }
-            //在左边递归
         }
         return -1;
     }
 
 
-    public List<List<Integer>> res2;
-    public Stack<Integer> integerStack;
-    public boolean[] used;
+    public int[][] generateMatrix(int n) {
+        int[][] matrix = new int[n][n];
+        if (n == 0) return matrix;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                matrix[i][j] = Integer.MAX_VALUE;
+            }
+        }
+        gobaln = n;
+        h15(matrix, 0, 0, 3);
+        return matrix;
+
+    }
+
+    int count2 = 1;
+    int gobaln;
+
+    public void h15(int[][] matrix, int x, int y, int pos) {
+        if (x < 0 || x > matrix.length - 1 || y < 0 || y > matrix[0].length - 1 || count2 == gobaln * gobaln) {
+            matrix[x][y] = count2;
+            return;
+        }
+        switch (pos) {
+            //上
+            case 0:
+                for (int i = x; i >= 0; i--) {
+                    if (matrix[i][y] != Integer.MAX_VALUE) {
+                        h15(matrix, i + 1, y + 1, 3);
+                        break;
+                    } else {
+                        matrix[i][y] = count2++;
+                    }
+                }
+                break;
+            case 1:
+                for (int i = x; i < matrix.length; i++) {
+                    if (matrix[i][y] != Integer.MAX_VALUE) {
+                        h15(matrix, i - 1, y - 1, 2);
+                        break;
+                    } else if (i == matrix.length - 1) {
+                        h15(matrix, matrix.length - 1, matrix[0].length - 1, 2);
+                        break;
+                    } else {
+                        matrix[i][y] = count2++;
+                    }
+                }
+                break;
+            case 2:
+                for (int i = y; i >= 0; i--) {
+                    if (matrix[x][i] != Integer.MAX_VALUE) {
+                        h15(matrix, x - 1, i + 1, 0);
+                        break;
+                    } else if (i == 0) {
+                        h15(matrix, matrix.length - 1, 0, 0);
+                        break;
+                    } else {
+                        matrix[x][i] = count2++;
+                    }
+                }
+                break;
+            case 3:
+                for (int i = y; i < matrix[0].length; i++) {
+                    if (matrix[x][i] != Integer.MAX_VALUE) {
+                        h15(matrix, x + 1, i - 1, 1);
+                        break;
+                    } else if (i == matrix[0].length - 1) {
+                        h15(matrix, 0, matrix[0].length - 1, 1);
+                        break;
+                    } else {
+                        matrix[x][i] = count2++;
+                    }
+                }
+                break;
+        }
+    }
+
+    public int[][] merge(int[][] intervals) {
+        if (intervals == null) return new int[0][0];
+        if (intervals.length == 1) return intervals;
+        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+        Stack<int[]> res = new Stack<>();
+        int[] temp = intervals[0];
+        res.push(temp);
+        for (int i = 1; i < intervals.length; i++) {
+            if (temp[1] < intervals[i][0]) {
+                temp = intervals[i];
+                res.add(intervals[i]);
+            } else if ((temp[0] == intervals[i][0] && temp[1] <= intervals[i][1]) || (temp[1] >= intervals[i][0] && temp[1] <= intervals[i][1]) || (temp[1] == intervals[i][0])) {
+                if (res.size() == 0) {
+                    res.push(new int[]{temp[0], intervals[i][1]});
+                } else {
+                    res.peek()[1] = intervals[i][1];
+                }
+                temp[1] = intervals[i][1];
+            }
+        }
+        int[][] resArr = res.toArray(new int[0][]);
+        return resArr;
+    }
+
+    Stack<Integer> integerStack;
+    boolean[] used;
+    int globalk;
+    String res3 = "";
+    boolean cflag = false;
 
 
-    public List<List<Integer>> permuteUnique(int[] nums) {
-        res2 = new ArrayList<>();
+    public String getPermutation(int n, int k) {
+        int[] nums = new int[n];
+        for (int i = 1; i <= n; i++) {
+            nums[i - 1] = i;
+        }
+        used = new boolean[n];
+        globalk = k - 1;
         integerStack = new Stack<>();
         h13(nums);
-        return res2;
+        return res3;
     }
 
     public void h13(int[] nums) {
-
+        if (integerStack.size() == nums.length) {
+            if (globalk == 0) {
+                while (integerStack.size() > 0) {
+                    res3 = integerStack.pop() + res3;
+                }
+                cflag = true;
+                return;
+            } else {
+                globalk--;
+            }
+        }
         for (int i = 0; i < nums.length; i++) {
             if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) {
                 continue;
             }
-
             if (!used[i]) {
                 integerStack.push(nums[i]);
                 used[i] = true;
                 h13(nums);
+                if (cflag) {
+                    return;
+                }
                 used[i] = false;
                 integerStack.pop();
             }
         }
     }
 
-    //54. 螺旋矩阵
-    public List<Integer> spiralOrder(int[][] matrix) {
-        List<Integer> integers = new ArrayList<>();
-        if (matrix == null || matrix.length == 0) return integers;
-        h15(matrix, 0, 0, 3, integers);
-        return integers;
+    //61. 旋转链表
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null || k == 0) return head;
+        int length = 0;
+        ListNode pNode = head;
+        while (head != null) {
+            head = head.next;
+            length++;
+        }
+        k %= length;
+
+        head = pNode;
+        int count2 = 1;
+        while (head != null) {
+            head = head.next;
+            count2++;
+            if (count2 == length - k) {
+                ListNode currentNode = head.next;
+                head.next = null;
+                ListNode preCurrentNode = currentNode;
+                while (currentNode.next != null) {
+                    currentNode = currentNode.next;
+                }
+                currentNode.next = pNode;
+                return preCurrentNode;
+            }
+        }
+        return null;
     }
 
-    public void h15(int[][] matrix, int x, int y, int pos, List<Integer> integers) {
-        if (x < 0 || x > matrix.length - 1 || y < 0 || y > matrix[0].length - 1 || matrix[x][y] == Integer.MAX_VALUE) return;
-        switch (pos) {
-            //上
-            case 0:
-                for (int i = x; i >= 0; i--) {
-                    if (matrix[i][y] == Integer.MAX_VALUE) {
-                        h15(matrix, i + 1, y + 1, 3, integers);
-                        break;
-                    } else {
-                        integers.add(matrix[i][y]);
-                        matrix[i][y] = Integer.MAX_VALUE;
+    public String simplifyPath(String path) {
+        Stack<String> stringStack = new Stack<>();
+        for (String s : path.split("/")) {
+            if (!s.equals(".") && !(s.equals(""))) {
+                if (s.equals("..")) {
+                    if (stringStack.size() > 0) {
+                        stringStack.pop();
+                    }
+                } else {
+                    stringStack.push(s);
+                }
+            }
+        }
+        if (stringStack.size() == 0) return "/";
+        String res = "";
+        while (stringStack.size() > 0) {
+            res = "/" + stringStack.pop() + res;
+        }
+        return res;
+    }
+
+    //74. 搜索二维矩阵
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
+        int l = 0;
+        int r = matrix.length - 1;
+        int mid = 0;
+        while (l <= r) {
+            mid = (r + l) / 2;
+            int[] tempArr = matrix[mid];
+            if (tempArr[tempArr.length - 1] > target) {
+                if (l == r) break;
+                r = mid;
+            } else if (tempArr[tempArr.length - 1] < target) {
+                if (l == r) break;
+                l = mid + 1;
+            } else {
+                return true;
+            }
+        }
+        //判断mid的Arr是否包含该target
+        int[] Arr = matrix[mid];
+        l = 0;
+        r = Arr.length - 1;
+        while (l <= r) {
+            mid = (r + l) / 2;
+            if (Arr[mid] > target) {
+                r = mid - 1;
+            } else if (Arr[mid] < target) {
+                l = mid + 1;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //77 组合
+    public List<List<Integer>> combine(int n, int k) {
+        Stack<Integer> stack = new Stack<>();
+        List<List<Integer>> res = new LinkedList<>();
+        h19(stack, n, k, 1, res);
+        return res;
+    }
+
+    public void h19(Stack<Integer> stack, int n, int k, int index, List<List<Integer>> res) {
+        if (stack.size() == k) {
+            res.add(new LinkedList<>(stack));
+            return;
+        }
+        for (int i = index; i <= n; i++) {
+            stack.push(i);
+            h19(stack, n, k, i + 1, res);
+            stack.pop();
+        }
+    }
+
+    public boolean exist(char[][] board, String word) {
+        LinkedList<int[]> list = new LinkedList<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    if (h22(board, word, list, i, j)) return true;
+                    list.clear();
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean h22(char[][] board, String word, LinkedList<int[]> list, int x, int y) {
+        boolean res;
+        if (x < 0 || x > board.length - 1 || y < 0 || y > board[0].length - 1) {
+            return list.size() == word.length();
+        } else if (board[x][y] == word.charAt(list.size())) {
+            //判断该坐标是否在当前路径已经使用过了
+            for (int[] ints : list) {
+                if (ints[0] == x && ints[1] == y) return false;
+            }
+            list.add(new int[]{x, y});
+            if (list.size() == word.length()) return true;
+        } else return false;
+
+
+        res = h22(board, word, list, x + 1, y)
+                || h22(board, word, list, x - 1, y)
+                || h22(board, word, list, x, y - 1)
+                || h22(board, word, list, x, y + 1);
+        if (list.size() > 0) list.removeLast();
+        return res;
+    }
+
+    public int removeDuplicates(int[] nums) {
+        int i = 0;
+        for (int n : nums) {
+            if (i < 2 || n > nums[i - 2]) {
+                nums[i++] = n;
+            }
+        }
+        return i;
+    }
+
+    public int[] sortArrayByParity(int[] A) {
+        if (A == null || A.length == 1) return A;
+        int index = A.length - 1;
+        for (int i = A.length - 1; i >= 0; i--) {
+            if (A[i] % 2 != 0) {
+                int temp = A[index];
+                A[index] = A[i];
+                A[i] = temp;
+                index--;
+            }
+        }
+        return A;
+    }
+
+    //82. 删除排序链表中的重复元素 II
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) return null;
+        ListNode zeroNode1 = new ListNode(Integer.MIN_VALUE);
+        ListNode zeroNode2 = new ListNode(Integer.MAX_VALUE);
+        zeroNode1.next = head;
+        head = zeroNode1;
+        while (head.next != null) {
+            head = head.next;
+        }
+        head.next = zeroNode2;
+        head = zeroNode1;
+
+        ListNode preNode = head;
+        ListNode later = head;
+        int tempVal = head.val;
+        while (head.next != null) {
+            head = head.next;
+            if (tempVal == head.val) {
+                //later指针前进
+                while (later.next.val != tempVal) {
+                    later = later.next;
+                }
+                //找到下一个不同的结点
+                while (head.val == tempVal) {
+                    head = head.next;
+                }
+                later.next = head;
+            }
+            tempVal = head.val;
+        }
+        later = preNode;
+        while (later.next.next != null) {
+            later = later.next;
+        }
+        later.next = null;
+        return preNode.next;
+    }
+
+    public ListNode partition(ListNode head, int x) {
+        ListNode smallList = new ListNode(0);
+        ListNode preSmall = smallList;
+        ListNode bigList = new ListNode(0);
+        ListNode preBig = bigList;
+        while (head != null) {
+            if (head.val < x) {
+                smallList.next = head;
+                smallList = smallList.next;
+            } else {
+                bigList.next = head;
+                bigList = bigList.next;
+            }
+            head = head.next;
+        }
+        bigList.next = null;
+        smallList.next = preBig.next;
+        return preSmall.next;
+    }
+
+    //89 格雷编码
+    public List<Integer> grayCode(int n) {
+        /**
+         关键是搞清楚格雷编码的生成过程, G(i) = i ^ (i/2);
+         如 n = 3:
+         G(0) = 000,
+         G(1) = 1 ^ 0 = 001 ^ 000 = 001
+         G(2) = 2 ^ 1 = 010 ^ 001 = 011
+         G(3) = 3 ^ 1 = 011 ^ 001 = 010
+         G(4) = 4 ^ 2 = 100 ^ 010 = 110
+         G(5) = 5 ^ 2 = 101 ^ 010 = 111
+         G(6) = 6 ^ 3 = 110 ^ 011 = 101
+         G(7) = 7 ^ 3 = 111 ^ 011 = 100
+         **/
+        List<Integer> res = new LinkedList<>();
+        for (int i = 0; i < 1 << n; i++) {
+            res.add(i ^ (i >> 1));
+        }
+        return res;
+    }
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (m == n) return head;
+        ListNode preNode = head;
+        ListNode reverseFirstNode = new ListNode(0);
+        ListNode reverseLastNode = head;
+        ListNode zeroNode = new ListNode(0);
+        ListNode temp;
+        int index = 1;
+        while (head != null) {
+            if (index < m) {
+                reverseFirstNode = head;
+                head = head.next;
+            } else if (index >= m && index <= n) {
+                if (index == m) {
+                    reverseLastNode = head;
+                }
+                temp = head.next;
+                head.next = zeroNode.next;
+                zeroNode.next = head;
+                head = temp;
+                if (index == n) {
+                    reverseLastNode.next = temp;
+                    break;
+                }
+            } else {
+                head = head.next;
+            }
+            index++;
+        }
+        if (m == 1) return zeroNode.next;
+        reverseFirstNode.next = zeroNode.next;
+        return preNode;
+    }
+
+    public List<TreeNode> generateTrees(int n) {
+        return helpGenerateTrees(1, n);
+    }
+
+    public List<TreeNode> helpGenerateTrees(int l, int r) {
+        LinkedList<TreeNode> list = new LinkedList<>();
+        if (l > r) {
+            list.add(null);
+            return list;
+        }
+        for (int i = l; i <= r; i++) {
+            List<TreeNode> leftList = helpGenerateTrees(l, i - 1);
+            List<TreeNode> rightList = helpGenerateTrees(i + 1, r);
+            for (TreeNode leftNode : leftList) {
+                for (TreeNode rightnode : rightList) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = leftNode;
+                    root.right = rightnode;
+                    list.add(root);
+                }
+            }
+        }
+        return list;
+    }
+
+    /*
+    G(n) = G(0)*G(n-1)+G(1)*(n-2)+...+G(n-1)*G(0)
+     */
+    public int numTrees(int n) {
+
+        if (n == 1) return 1;
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j < i; i++) {
+                dp[i] += dp[j - 1] * dp[i - j];
+            }
+        }
+        return dp[n];
+    }
+
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+        List<Integer> integers = new LinkedList<>();
+        helpValidBST(root, integers);
+        int a = integers.get(0);
+        integers.forEach(System.out::println);
+        for (int i = 1; i < integers.size(); i++) {
+            if (a >= integers.get(i)) {
+                return false;
+            } else {
+                a = integers.get(i);
+            }
+        }
+        return true;
+    }
+
+    public void helpValidBST(TreeNode root, List<Integer> integers) {
+        if (root == null) return;
+        helpValidBST(root.left, integers);
+        integers.add(root.val);
+        helpValidBST(root.right, integers);
+    }
+
+    public List<String> restoreIpAddresses(String s) {
+        if (s.length() < 4 || s.length() > 12) return new ArrayList<>();
+        List<String> res = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (int a = 1; a < 4; a++) {
+            for (int b = 1; b < 4; b++) {
+                for (int c = 1; c < 4; c++) {
+                    for (int d = 1; d < 4; d++) {
+                        if (a + b + c + d == s.length()) {
+                            int v1 = Integer.parseInt(s.substring(0, a));
+                            int v2 = Integer.parseInt(s.substring(a, a + b));
+                            int v3 = Integer.parseInt(s.substring(a + b, a + b + c));
+                            int v4 = Integer.parseInt(s.substring(a + b + c));
+                            if (v1 <= 255 && v2 <= 255 && v3 <= 255 && v4 <= 255) {
+                                sb.append(v1).append('.').append(v2).append('.').append(v3).append('.').append(v4);
+                                //避免01=1这种情况导致答案不准确
+                                if (sb.length() == s.length() + 3) res.add(sb.toString());
+                                sb.delete(0, sb.length());
+                            }
+                        }
                     }
                 }
-                break;
-            case 1:
-                for (int i = x; i < matrix.length; i++) {
-                    if (matrix[i][y] == Integer.MAX_VALUE) {
-                        h15(matrix, i - 1, y - 1, 2, integers);
-                        break;
-                    } else if (i == matrix.length - 1) {
-                        h15(matrix, matrix.length - 1, matrix[0].length - 1, 2, integers);
-                        break;
-                    } else {
-                        integers.add(matrix[i][y]);
-                        matrix[i][y] = Integer.MAX_VALUE;
-                    }
+            }
+        }
+        return res;
+    }
+
+
+    private boolean hasPathSumRes = false;
+
+    private boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) return false;
+        if (root.val == sum && root.left == null && root.right == null) {
+            hasPathSumRes = true;
+            return true;
+        }
+        hasPathSum(root.left, sum - root.val);
+        if (hasPathSumRes) return true;
+        hasPathSum(root.right, sum - root.val);
+        return hasPathSumRes;
+    }
+
+    public Node connect2(Node root) {
+        if (root == null) return null;
+        Node preNode;
+        if (root.left != null) preNode = root.left;
+        else if (root.right != null) preNode = root.right;
+        else return root;
+        Node temp = root;
+        while (temp != null) {
+            if (temp.left != null && preNode != temp.left) {
+                preNode.next = temp.left;
+                preNode = preNode.next;
+            }
+            if (temp.right != null && preNode != temp.right) {
+                preNode.next = temp.right;
+                preNode = preNode.next;
+            }
+            temp = temp.next;
+        }
+        connect2(root.left);
+        connect2(root.right);
+        return root;
+    }
+
+    /*
+    输入:
+    beginWord = "hit",
+    endWord = "cog",
+    wordList = ["hot","dot","dog","lot","log","cog"]
+    输出: 5
+    解释: 一个最短转换序列是 "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+     返回它的长度 5。
+     */
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if (!wordList.contains(endWord)) return 0;
+        worldListOriginLength = wordList.size();
+        wordList = new ArrayList<>(wordList);
+        wordList.remove(endWord);
+        hellllllp(beginWord, endWord, wordList);
+        if (ladderLengthFlag) return 2;
+        helpLadderLength(beginWord, endWord, wordList);
+        return ladderLengthRes == Integer.MAX_VALUE ? 0 : ladderLengthRes + 1;
+    }
+
+    private int ladderLengthRes = Integer.MAX_VALUE;
+    private int worldListOriginLength;
+    private boolean ladderLengthFlag = false;
+
+    public void helpLadderLength(String beginWord, String endWord, List<String> wordList) {
+        LinkedList<String> strings = new LinkedList<>();
+        for (int i = 0; i < endWord.length(); i++) {
+            for (String s : wordList) {
+                char[] chars = endWord.toCharArray();
+                chars[i] = s.charAt(i);
+                if (String.valueOf(chars).equals(s) && !strings.contains(s)) {
+                    strings.add(s);
                 }
-                break;
-            case 2:
-                for (int i = y; i >= 0; i--) {
-                    if (matrix[x][i] == Integer.MAX_VALUE) {
-                        h15(matrix, x - 1, i + 1, 0, integers);
-                        break;
-                    } else if (i == 0) {
-                        h15(matrix, matrix.length - 1, 0, 0, integers);
-                        break;
-                    } else {
-                        integers.add(matrix[x][i]);
-                        matrix[x][i] = Integer.MAX_VALUE;
-                    }
-                }
-                break;
-            case 3:
-                for (int i = y; i < matrix[0].length; i++) {
-                    if (matrix[x][i] == Integer.MAX_VALUE) {
-                        h15(matrix, x + 1, i - 1, 1, integers);
-                        break;
-                    } else if (i == matrix[0].length - 1) {
-                        h15(matrix, 0, matrix[0].length - 1, 1, integers);
-                        break;
-                    } else {
-                        integers.add(matrix[x][i]);
-                        matrix[x][i] = Integer.MAX_VALUE;
-                    }
-                }
-                break;
+            }
+        }
+        for (String s : strings) {
+            ArrayList<String> list = new ArrayList<>(wordList);
+            list.remove(s);
+            hellllllp(beginWord, s, list);
+            if (ladderLengthFlag) return;
+        }
+        for (String s : strings) {
+            ArrayList<String> list = new ArrayList<>(wordList);
+            list.remove(s);
+            helpLadderLength(beginWord, s, list);
+        }
+    }
+
+    public void hellllllp(String beginWord, String endWord, List<String> wordList) {
+        int count = 0;
+        for (int i = 0; i < beginWord.length(); i++) {
+            if (beginWord.charAt(i) != endWord.charAt(i)) {
+                count++;
+            }
+        }
+        if (count <= 1) {
+            ladderLengthRes = Math.min(ladderLengthRes, worldListOriginLength - wordList.size());
+            ladderLengthFlag = true;
         }
     }
 
 
-    public static void main(String[] args) {
-        int[][] martix = new int[][]{
-                {1, 2, 3, 4, 5},
-                {1, 2, 3, 4, 5},
-                {1, 2, 3, 4, 5},
-        };
-
-        new Solution().spiralOrder(martix).forEach(i -> System.out.print(i + " "));
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode slow = new ListNode(0);
+        ListNode pre = slow;
+        slow.next = head;
+        while (head != null) {
+            if (head.val == val) {
+                while (slow.next != head) {
+                    slow = slow.next;
+                }
+                slow.next = head.next;
+            }
+            head = head.next;
+        }
+        return pre.next;
     }
+
+    public boolean isIsomorphic(String s, String t) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.indexOf(s.charAt(i)) != t.indexOf(t.charAt(i))) return false;
+        }
+        return true;
+    }
+
+    public boolean isUgly(int num) {
+        if (num < 1) return false;
+        while (num % 5 != 0) {
+            num /= 5;
+        }
+        while (num % 3 != 0) {
+            num /= 3;
+        }
+        while (num % 2 != 0) {
+            num >>= 1;
+        }
+        return num == 1;
+    }
+
+    public String reverseVowels(String s) {
+        if (s == null || s.length() == 0) return "";
+        int l = 0;
+        int r = s.length() - 1;
+        String str = "aeiouAEIOU";
+        char[] chars = s.toCharArray();
+        while (l < r) {
+            if (str.indexOf(chars[l]) != -1 && str.indexOf(chars[r]) != -1) {
+                char temp = chars[r];
+                chars[r] = chars[l];
+                chars[l] = temp;
+                l++;
+                r--;
+            } else if (str.indexOf(chars[l]) != -1) {
+                r--;
+            } else {
+                l++;
+            }
+        }
+        return String.valueOf(chars);
+    }
+
+    public int firstBadVersion(int n) {
+        if (isBadVersion(1)) return 1;
+        int l = 1;
+        int r = n;
+        int res = 0;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (isBadVersion(mid)) {
+                res = mid;
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return res == 0 ? isBadVersion(n) ? n : 0 : res;
+    }
+
+    public boolean isBadVersion(int n) {
+        return n >= 1702766719;
+    }
+
+    public String getHint(String secret, String guess) {
+        StringBuilder builder = new StringBuilder();
+        Map<Character, Integer> map1 = new HashMap<>();
+        Map<Character, Integer> map2 = new HashMap<>();
+        int count1 = 0;
+        int count2 = 0;
+        for (int i = 0; i < secret.length(); i++) {
+            if (secret.charAt(i) == guess.charAt(i)) {
+                count1++;
+            } else {
+                map1.put(secret.charAt(i), map1.get(secret.charAt(i)) == null ? 1 : map1.get(secret.charAt(i)) + 1);
+                map2.put(guess.charAt(i), map2.get(guess.charAt(i)) == null ? 1 : map2.get(guess.charAt(i)) + 1);
+            }
+        }
+        map1.keySet().retainAll(map2.keySet());
+        for (Character c1 : map1.keySet()) {
+            count2 += Math.min(map1.get(c1), map2.get(c1));
+        }
+        return builder.append(count1).append('A').append(count2).append('B').toString();
+    }
+
+    public int[] intersection(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums2 == null) return new int[]{};
+        HashSet<Integer> integers = new HashSet<>();
+        int a = 0;
+        int b = 0;
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        while (a < nums1.length && b < nums2.length) {
+            if (nums1[a] == nums2[b]) {
+                integers.add(nums1[a]);
+                a++;
+                b++;
+            } else if (nums1[a] > nums2[b]) {
+                b++;
+            } else {
+                a++;
+            }
+        }
+        int[] res = new int[integers.size()];
+        List<Integer> integers1 = new ArrayList<>(integers);
+        for (int i = 0; i < integers1.size(); i++) {
+            res[i] = integers1.get(i);
+        }
+        return res;
+    }
+
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        if (nums == null || nums.length == 0) return false;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i]) && (i - map.get(nums[i]) <= k)) return true;
+            else map.put(nums[i], i);
+        }
+        return false;
+    }
+
+    public boolean isPerfectSquare(int num) {
+        int a = 1;
+        while (num >= 0) {
+            if (num == 0) return true;
+            num = num - (a * 2 - 1);
+            a++;
+        }
+        return false;
+    }
+
+    public int guessNumber(int n) {
+        if (guess(n) == 0) return n;
+        int l = 1;
+        int r = n;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (guess(mid) == 0) return mid;
+            else if (guess(mid) == -1) r = mid;
+            else l = mid + 1;
+        }
+        return 0;
+    }
+
+    int guess(int num) {
+        return 0;
+    }
+
+    public boolean canConstruct(String ransomNote, String magazine) {
+        int[] arr = new int[26];
+        for (int i = 0; i < magazine.length(); i++) {
+            if (i < ransomNote.length()) {
+                arr[ransomNote.charAt(i) - 'a'] -= 1;
+            }
+            arr[magazine.charAt(i) - 'a'] += 1;
+        }
+        for (int i = 0; i < 26; i++) {
+            if (arr[i] < 0) return false;
+        }
+        return true;
+    }
+
+    public char findTheDifference(String s, String t) {
+        int a = 0;
+        for (int i = 0; i < s.length(); i++) {
+            a = a ^ s.charAt(i) ^ t.charAt(i);
+        }
+        a = a ^ t.charAt(t.length() - 1);
+        return (char) a;
+    }
+
+    public static void main(String[] args) {
+//        int[] arr = new int[26];
+//        System.out.println(arr[0]);
+        System.out.println(new Solution().canConstruct("aa", "ab"));
+    }
+
 }
+
+
 
 
 
