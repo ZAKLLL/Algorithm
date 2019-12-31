@@ -6,42 +6,33 @@ package Test;
  * @author: ZakL
  * @create: 2019-10-10 14:52
  **/
-public class Demo {
-    private int b = 0;
+public class Demo implements Runnable {
 
-    public void set1() {
-        b = 0;
+    //    private Integer a = 0;
+    private A a = new A();
+
+    static class A {
+        public int value = 0;
     }
 
-    public void set2() {
-        b = -1;
-    }
-
-    public void check() {
-        if (0 != b && -1 != b) {
-            System.out.println(b+"error");
+    @Override
+    public void run() {
+        for (int j = 0; j < 1_000_000; j++) {
+            synchronized (a) {
+                a.value++;
+            }
         }
     }
 
-
     public static void main(String[] args) throws InterruptedException {
         Demo demo = new Demo();
-        new Thread(() -> {
-            while (true) {
-                demo.set1();
-            }
-        }).start();
-        new Thread(() -> {
-            while (true) {
-                demo.set2();
-            }
-        }).start();
-        new Thread(() -> {
-            while (true) {
-                demo.check();
-            }
-        }).start();
+        Thread t1 = new Thread(demo);
+        Thread t2 = new Thread(demo);
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+        System.out.println(demo.a.value);
     }
 }
-
 

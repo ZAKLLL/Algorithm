@@ -1,22 +1,22 @@
 package DataStructure;
 
+import java.util.List;
+
 /**
  * @program: suanfa
  * @description:
  * @author: ZakL
- * @create: 2019-10-02 19:21
+ * @create: 2019-10-21 20:29
  **/
 public class Node {
     public int val;
-    public Node left;
-    public Node right;
-    public Node next;
+    public List<Node> children;
 
-    public Node(int val) {
-        this.val = val;
+    public Node() {
     }
 
-
-
-
-}
+    public Node(int _val, List<Node> _children) {
+        val = _val;
+        children = _children;
+    }
+};
