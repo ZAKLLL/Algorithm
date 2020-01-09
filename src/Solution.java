@@ -2,6 +2,7 @@ import DataStructure.ListNode;
 import DataStructure.TreeNode;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @program: suanfa
@@ -308,11 +309,13 @@ public class Solution {
 
 
     int res = 0;
+
     public int longestUnivaluePath(TreeNode root) {
         if (root == null) return 0;
         helpLongestUnivaluePath(root);
         return res;
     }
+
     public int helpLongestUnivaluePath(TreeNode root) {
         if (root == null) return 0;
         int leftCount = 0;
@@ -327,16 +330,270 @@ public class Solution {
         return Math.max(leftCount, rightCount) + 1;
     }
 
-    public static void main(String[] args) {
-        TreeNode treeNode = Utils.generateTreeNode(new int[]{1, Integer.MIN_VALUE, 1, 1, 1, 1, 1, 1});
-        int i = new Solution().longestUnivaluePath(treeNode);
-        System.out.println(i);
-    }
     public String longestWord(String[] words) {
+        Arrays.sort(words);
+        Set<String> set = new HashSet<>();
+        String res = "";
+        for (String str : words) {
+            //对字母排序后，第一个单词一定是共有的，后面只需在此基础上添加
+            if (str.length() == 1 || set.contains(str.substring(0, str.length() - 1))) {
+                res = str.length() > res.length() ? str : res;
+                set.add(str);
+            }
+        }
+        return res;
 
-        return "";
+    }
+
+    public int[] distributeCandies(int candies, int num_people) {
+        int[] res = new int[num_people];
+        int count = 0;
+        int index = 0;
+        while (candies > 0) {
+            if (candies <= count) {
+                res[index] += candies;
+                break;
+            }
+            res[index++] += ++count;
+            candies -= count;
+            if (index == num_people) {
+                index = 0;
+            }
+        }
+        return res;
     }
 
 
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> res = new LinkedList<>();
+        helpCombinationSum3(k, n, 0, new LinkedList<>(), res);
+        return res;
+    }
+
+    public void helpCombinationSum3(int k, int n, int tempSum, LinkedList<Integer> integers, List<List<Integer>> res) {
+        if (tempSum > n || integers.size() > k || (tempSum != n && integers.size() == k)) return;
+        if (tempSum == n && integers.size() == k) res.add((List<Integer>) integers.clone());
+        for (int i = integers.size() == 0 ? 1 : integers.getLast(); i <= 9; i++) {
+            if (integers.size() > 0 && integers.getLast() >= i) continue;
+            tempSum += i;
+            integers.add(i);
+            helpCombinationSum3(k, n, tempSum, integers, res);
+            tempSum -= i;
+            integers.removeLast();
+        }
+    }
+
+    public ListNode oddEvenList(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode odd = head; //奇数
+        ListNode even = head.next; //偶数
+        ListNode cur = head.next;
+        while (cur.next != null && cur.next.next != null) {
+            cur = cur.next;
+            ListNode tempEven = odd.next;
+            odd.next = cur;
+            odd = odd.next;
+            cur = cur.next;
+            even.next = cur;
+            even = even.next;
+            odd.next = tempEven;
+        }
+        if (cur.next != null) {
+            ListNode temp = odd.next;
+            odd.next = cur.next;
+            odd.next.next = temp;
+            even.next = null;
+        }
+
+        return head;
+    }
+
+    public List<Integer> getAllElements(TreeNode root1, TreeNode root2) {
+        List<Integer> list = new LinkedList<>();
+        bst(root1, list);
+        bst(root2, list);
+        list.sort(Comparator.comparingInt(o -> o));
+        return list;
+    }
+
+    private List<Integer> merge(List<Integer> list, int mid) {
+        List<Integer> res = new LinkedList<>(list);
+        int p = 0;
+        int q = mid + 1;
+        int index = 0;
+        while (p <= mid && q < list.size()) {
+            res.set(index++, list.get(p) < list.get(q) ? list.get(p++) : list.get(q++));
+        }
+        while (p <= mid) {
+            res.set(index++, list.get(p++));
+        }
+        while (q < list.size()) {
+            res.set(index++, list.get(q++));
+        }
+        return res;
+    }
+
+    private void bst(TreeNode root, List<Integer> list1) {
+        if (root == null) return;
+        bst(root.left, list1);
+        list1.add(root.val);
+        bst(root.right, list1);
+    }
+
+    public String freqAlphabets(String s) {
+        StringBuilder res = new StringBuilder();
+        int index = 0;
+        while (index < s.length()) {
+            if (index + 2 < s.length() && s.charAt(index + 2) == '#') {
+                Integer integer = Integer.valueOf(s.substring(index, index + 2));
+                res.append((char) (integer + 96));
+                index += 3;
+            } else {
+                res.append((char) (s.charAt(index) + 48));
+                index++;
+            }
+        }
+        return res.toString();
+    }
+
+    //    public List<Integer> diffWaysToCompute(String input) {
+//        return partition(input);
+//    }
+//
+//    private List<Integer> partition(String str) {
+//        List<Integer> res = new LinkedList<>();
+//        for (int i = 0; i < str.length(); i++) {
+//            char c = str.charAt(i);
+//            if (!Character.isDigit(c)) {
+//                List<Integer> partitionLeft = partition(str.substring(0, i));
+//                List<Integer> partitionRight = partition(str.substring(i + 1));
+//                for (int left : partitionLeft) {
+//                    for (int right : partitionRight) {
+//                        if (c == '+') {
+//                            res.add(left + right);
+//                        }
+//                        if (c == '-') {
+//                            res.add(left - right);
+//                        }
+//                        if (c == '*') {
+//                            res.add(left * right);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        if (res.size() == 0) res.add(Integer.valueOf(str));
+//        return res;
+//    }
+    public List<Integer> diffWaysToCompute(String input) {
+        return recursive(input, new HashMap<>());
+    }
+
+    private List<Integer> recursive(String input, Map<String, List<Integer>> map) {
+        if (map.get(input) != null) return map.get(input);
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) == '+' || input.charAt(i) == '-' || input.charAt(i) == '*') {
+                List<Integer> lefts = recursive(input.substring(0, i), map);
+                List<Integer> rights = recursive(input.substring(i + 1), map);
+                for (Integer left : lefts) {
+                    for (Integer right : rights) {
+                        if (input.charAt(i) == '+') result.add(left + right);
+                        if (input.charAt(i) == '-') result.add(left - right);
+                        if (input.charAt(i) == '*') result.add(left * right);
+                    }
+                }
+            }
+        }
+        if (result.size() == 0) {
+            result.add(Integer.valueOf(input));
+        }
+        map.put(input, result);
+        return result;
+    }
+
+    public int numSquares(int n) {
+        int[] dp = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            dp[i] = i;
+            for (int j = 0; i - j * j >= 0; j++) {
+                dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+            }
+        }
+        return dp[n];
+    }
+
+    public static int wiggleMaxLength(int[] nums) {
+        if (nums.length < 2) return nums.length;
+        int a = nums[0];
+        int res = 0;
+        boolean head = false;
+        boolean tail = false;
+        for (int i = 1; i < nums.length - 1; i++) {
+            if ((nums[i] > a && nums[i + 1] < nums[i]) || (nums[i] < a && nums[i + 1] > nums[i])) {
+                res++;
+            }
+            if (i == 1 && res == 0) head = true;
+            a = nums[i];
+        }
+        if (tail) res++;
+        if (head) res++;
+        return res;
+    }
+
+    public static int wiggleMaxLength2(int[] nums) {
+        if (nums.length < 2) return nums.length;
+        int low = 1;
+        int high = 1;
+        for (int i = 1; i < nums.length; i++) {
+            //起始位高低位都为1.
+            //保证了在连续上升/下降的情况下 high/low 不会重复递增，
+            //在上升情况中，只要没有发生坡度中断，则high对应的low不会发生改变。那么high位就不会发生改变。
+            if (nums[i] > nums[i - 1]) high = low + 1;
+            if (nums[i] < nums[i - 1]) low = high + 1;
+        }
+        return Math.max(low, high);
+    }
+
+    private static int[] randomArr() {
+
+        int[] arr = new int[(int) (Math.random() * 100)];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (int) (Math.random() * 100);
+        }
+        return arr;
+    }
+
+    public int maxProduct(String[] words) {
+        int[] arr = new int[words.length];
+        int res = 0;
+        for (int i = 0; i < arr.length; i++) {
+            String word = words[i];
+            for (int j = 0; j < word.length(); j++) {
+                arr[i] |= 1 << (word.charAt(j) - 'a');
+            }
+        }
+        for (int i = 0; i < words.length - 1; i++) {
+            for (int j = i + 1; j < words.length; j++) {
+                if ((arr[i] & arr[j]) == 0) {
+                    res = Math.max(res, words[i].length() * words[j].length());
+//                    res = Math.max(res, Integer.bitCount(arr[i]) * Integer.bitCount(arr[j]));
+                    System.out.println("word[i]" + words[i] + ":" + Integer.toBinaryString(arr[i]) + "-----word[j]" + words[j] + ":" + Integer.toBinaryString(arr[j]));
+                }
+            }
+        }
+        return res;
+    }
+
+    public int bulbSwitch(int n) {
+
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Solution().maxProduct(new String[]{"eae", "ea", "aaf", "bda", "fcf", "dc", "ac", "ce", "cefde", "dabae"}));
+
+    }
 }
+
 
