@@ -40,7 +40,7 @@ public class UnionFindSet {
         if (father != node) {
             father = findHead(father);
         }
-        fatherMap.put(node, father); //是每个节点的父节点都是head节点
+        fatherMap.put(node, father); //使每个节点的父节点都是head节点
         return father;
     }
 

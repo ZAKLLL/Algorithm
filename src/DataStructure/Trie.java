@@ -94,7 +94,8 @@ public class Trie {
 
     public static void main(String[] args) {
         Trie trie = new Trie();
-        trie.insert("apple");
+        trie.insert("mississippi");
+        System.out.println(trie.search("mississippi"));
 
     }
 }

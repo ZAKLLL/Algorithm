@@ -2,6 +2,7 @@ import DataStructure.TreeNode;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * @program: suanfa
@@ -16,47 +17,63 @@ public class Utils {
         arr[j] = temp;
     }
 
-    public static TreeNode generateTreeNode(int[] arr) {
+    public static TreeNode generateTreeNode(String data) {
         LinkedList<TreeNode> treeNodes = new LinkedList<>();
-        for (int i : arr) {
-            treeNodes.add(new TreeNode(i));
+        data = data.substring(1, data.length() - 1);
+        if (data.length() == 0) return null;
+        String[] split = data.split(",");
+        for (String s : split) {
+            if (s.equals("null")) treeNodes.add(null);
+            else treeNodes.add(new TreeNode(Integer.parseInt(s)));
         }
-        TreeNode poll = treeNodes.poll();
+        TreeNode root = treeNodes.poll();
         LinkedList<TreeNode> used = new LinkedList<>();
-        used.add(poll);
+        used.add(root);
         while (treeNodes.size() > 0) {
             int len = used.size();
             for (int i = 0; i < len * 2; i++) {
-                if (treeNodes.isEmpty()) {
-                    break;
-                }
+                if (treeNodes.isEmpty()) break;
                 used.add(treeNodes.poll());
             }
             int index = len;
             for (int i = 0; i < len; i++) {
                 if (index < used.size()) {
-                    TreeNode leftNode = used.get(index++);
-                    used.get(i).left = leftNode.val == Integer.MIN_VALUE ? null : leftNode;
+                    used.get(i).left = used.get(index++);
                 }
                 if (index < used.size()) {
-                    TreeNode rightNode = used.get(index++);
-                    used.get(i).right = rightNode.val == Integer.MIN_VALUE ? null : rightNode;
+                    used.get(i).right = used.get(index++);
                 }
             }
             for (int i = 0; i < len; i++) {
                 used.removeFirst();
             }
-            Iterator<TreeNode> iterator = used.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().val == Integer.MIN_VALUE) {
-                    iterator.remove();
-                } else break;
+            used.removeIf(Objects::isNull);
+        }
+        return root;
+    }
+
+    public static String binarySerialize(TreeNode root) {
+        if (root == null) return "[]";
+        LinkedList<TreeNode> list = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        list.add(root);
+        while (!list.isEmpty()) {
+            TreeNode treeNode = list.removeFirst();
+            if (treeNode == null) sb.append("null").append(",");
+            else {
+                sb.append(treeNode.val).append(",");
+                list.add(treeNode.left);
+                list.add(treeNode.right);
             }
         }
-        return poll;
+        while (sb.length() >= 5 && sb.substring(sb.length() - 5, sb.length()).equals("null,")) {
+            sb.delete(sb.length() - 5, sb.length());
+        }
+        sb.replace(sb.length() - 1, sb.length(), "]");
+        return sb.toString();
     }
 
     public static void main(String[] args) {
-        TreeNode treeNode = generateTreeNode(new int[]{1, Integer.MIN_VALUE, 3, 4, 5, Integer.MIN_VALUE, 6, 8});
     }
 }
