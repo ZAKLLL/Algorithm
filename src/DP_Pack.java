@@ -45,12 +45,7 @@ public class DP_Pack {
             }
         }
         return dp[n];
-
     }
 
-    public int countPrimeSetBits(int L, int R) {
-
-        return 0;
-    }
 
 }
