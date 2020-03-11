@@ -1,5 +1,10 @@
 package DataStructure;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+
 /**
  * @program: suanfa
  * @description: 树状数组
@@ -52,9 +57,6 @@ public class TreeArray {
         return x & (-x);
     }
 
-    public static void main(String[] args) {
-        TreeArray treeArray = new TreeArray(new int[]{1, 2, 3, 4, 5, 6, 7, 8});
-        treeArray.add(4, 1);
-    }
+
 
 }

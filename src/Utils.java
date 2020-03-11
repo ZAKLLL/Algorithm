@@ -74,6 +74,35 @@ public class Utils {
         return sb.toString();
     }
 
+    //7
+    //[[1,2],[1,3],[1,7],[2,4],[2,6],[3,5]]
+    //2
+    //4
+    public static int[][] strToDArr(String str) {
+        str = str.substring(1, str.length() - 1);
+        str = str.replace("[", "").replace("]", "");
+        String[] split = str.split(",");
+        int[][] res = new int[split.length / 2][2];
+        int index = 0;
+        for (int i = 0; i < res.length; i++) {
+            res[i][0] = Integer.parseInt(split[index++]);
+            res[i][1] = Integer.parseInt(split[index++]);
+        }
+        return res;
+    }
+
+    public static int[] strtoArr(String str) {
+        str = str.substring(1, str.length() - 1);
+        str = str.replace("[", "").replace("]", "");
+        String[] split = str.split(",");
+        int[] res = new int[split.length];
+        int index = 0;
+        for (int i = 0; i < res.length; i++) {
+            res[i] = Integer.parseInt(split[index++]);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
     }
 }

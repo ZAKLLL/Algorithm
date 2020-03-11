@@ -1,8 +1,5 @@
-import DataStructure.ListNode;
 import DataStructure.TreeNode;
-import org.omg.CORBA.INTERNAL;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -14,86 +11,101 @@ import java.util.*;
 public class Solution {
 
 
-    public int orangesRotting(int[][] grid) {
-        if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
-        int[][] dir = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-        LinkedList<int[]> queue = new LinkedList<>();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] == 2) {
-                    queue.add(new int[]{i, j});
+    public double frogPosition(int n, int[][] edges, int t, int target) {
+        if (n == 1) return 1;
+        HashMap<Integer, List<Integer>> map = new HashMap<>();
+        boolean[] vis = new boolean[n + 1];
+        for (int[] edge : edges) {
+            if (!map.containsKey(edge[0])) map.put(edge[0], new LinkedList<>());
+            if (!map.containsKey(edge[1])) map.put(edge[1], new LinkedList<>());
+            map.get(edge[0]).add(edge[1]);
+            map.get(edge[1]).add(edge[0]);
+        }
+        dfs(map, 1, 1, t, target, 1, vis);
+        return res;
+    }
+
+    boolean find;
+    double res = 0;
+
+    public void dfs(HashMap<Integer, List<Integer>> map, int num, int level, int t, int target, double probability, boolean[] vis) {
+        if (find || level > t || map.get(num) == null || map.get(num).size() == 0) return;
+        vis[num] = true;
+        List<Integer> integers = map.get(num);
+        Iterator<Integer> iterator = integers.iterator();
+        while (iterator.hasNext()) {
+            if (vis[iterator.next()]) {
+                iterator.remove();
+                break;
+            }
+        }
+        double v = probability / integers.size();
+        for (Integer integer : integers) {
+            if (integer == target) {
+                List<Integer> integers1 = map.get(integer);
+                find = true;
+                //叶子节点或者刚好时间
+                if (level == t || integers1.size() == 1) {
+                    res = v;
+                }
+                return;
+            }
+            if (vis[integer]) continue;
+            dfs(map, integer, level + 1, t, target, v, vis);
+            if (find) return;
+        }
+        vis[num] = false;
+    }
+
+    public int maxProfit(int[] prices) {
+        int maxValue = 0, min = Integer.MAX_VALUE;
+        for (int price : prices) {
+            if (price < min) min = price;
+            else maxValue = Math.max(maxValue, price - min);
+        }
+        return maxValue;
+    }
+
+    int maxPath = 0;
+
+    public int diameterOfBinaryTree(TreeNode root) {
+        h(root);
+        return maxPath;
+    }
+
+    public int h(TreeNode root) {
+        if (root == null) return 0;
+        int l = 0, r = 0;
+        if (root.left != null) {
+            l = h(root.left) + 1;
+        }
+        if (root.right != null) {
+            r = h(root.right) + 1;
+        }
+        maxPath = Math.max(maxPath, l + r);
+        return l + r;
+    }
+
+    public int numPairsDivisibleBy60(int[] time) {
+        if (time == null || time.length == 0) return 0;
+        int res = 0;
+        int[] cache = new int[60];
+        for (int i : time) {
+            int a = i % 60;
+            if (a == 0) res++;
+            else {
+                if (cache[60 - a] > 0) {
+                    res++;
+                } else {
+                    cache[a]++;
                 }
             }
         }
-        int time = -1;
-        if (queue.size() == 0) time = 0;
-        while (queue.size() > 0) {
-            int len = queue.size();
-            time++;
-            for (int i = 0; i < len; i++) {
-                int[] poll = queue.poll();
-                for (int[] ints : dir) {
-                    int newX = poll[0] + ints[0];
-                    int newY = poll[1] + ints[1];
-                    //判断新的newXnewY是否是好的橘子
-                    if (newX >= 0 && newX < grid.length && newY >= 0 && newY < grid[0].length && grid[newX][newY] == 1) {
-                        grid[newX][newY] = 2;
-                        queue.add(new int[]{newX, newY});
-                    }
-                }
-            }
-        }
-        for (int[] ints : grid) {
-            for (int j = 0; j < grid[0].length; j++) {
-                if (ints[j] == 1) return -1;
-            }
-        }
-        return time;
+        return res;
     }
-
-    //用一个二维数组记录每个结点的入度和出度，出度为0入度为N的就是法官
-    public int findJudge(int N, int[][] trust) {
-        int[] count = new int[N];
-        for (int[] ints : trust) {
-            count[ints[0] - 1]--;
-            count[ints[1] - 1]++;
-        }
-        for (int i = 0; i < count.length; i++) {
-            if (count[i] == N - 1) {
-                return i + 1;
-            }
-        }
-        return -1;
-    }
-
-    public boolean isLongPressedName(String name, String typed) {
-        if (name == null || typed == null || typed.length() < name.length()) return false;
-        if (name.length() == 0 && typed.length() > 0) return false;
-        int index1 = 0;
-        int index2 = 0;
-        while (index1 < name.length() && index2 < typed.length()) {
-            if (name.charAt(index1) != typed.charAt(index2)) return false;
-            int count = 0;
-            int count2 = 0;
-            char pre = name.charAt(index1);
-            while (index1 < name.length() && name.charAt(index1) == pre) {
-                index1++;
-                count++;
-            }
-            while (index2 < typed.length() && typed.charAt(index2) == pre) {
-                count2++;
-                index2++;
-            }
-            if (count2 < count) return false;
-        }
-        return index1 == name.length() && index2 == typed.length();
-    }
-
-
 
     public static void main(String[] args) {
-        boolean longPressedName = new Solution().isLongPressedName("alex","aaleex");
-        System.out.println(longPressedName);
+        new Solution().numPairsDivisibleBy60(Utils.strtoArr("[30,20,150,100,40]"));
     }
 
 }
