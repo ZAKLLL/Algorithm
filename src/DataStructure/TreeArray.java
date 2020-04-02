@@ -1,10 +1,5 @@
 package DataStructure;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-
 /**
  * @program: suanfa
  * @description: 树状数组
@@ -12,8 +7,9 @@ import java.util.HashSet;
  * @create: 2020-02-23 16:46
  **/
 public class TreeArray {
-
+    //树状数组
     private int[] treeArr;
+    //原数组，初始化使用
     private int[] sur;
 
     public TreeArray(int[] arr) {
@@ -25,16 +21,16 @@ public class TreeArray {
 
     private void init() {
         for (int i = 1; i < treeArr.length; i++) {
-            int i1 = lowBit(i);
+            int count = lowBit(i);
             int sum = 0;
-            for (int j = i; j >= i + 1 - i1; j--) {
+            for (int j = i; j >= i + 1 - count; j--) {
                 sum += sur[j - 1];
             }
             treeArr[i] = sum;
         }
     }
 
-    private int query(int l, int r) {
+    public int query(int l, int r) {
         int sumr = 0, suml = 0;
         while (r > 0) {
             sumr += treeArr[r];
@@ -47,7 +43,7 @@ public class TreeArray {
         return sumr - suml;
     }
 
-    private void add(int pos, int v) {
+    public void add(int pos, int v) {
         for (int i = pos; i < treeArr.length; i += lowBit(i)) {
             treeArr[i] += v;
         }
@@ -56,7 +52,6 @@ public class TreeArray {
     private int lowBit(int x) {
         return x & (-x);
     }
-
 
 
 }

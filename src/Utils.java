@@ -1,8 +1,7 @@
+import DataStructure.ListNode;
 import DataStructure.TreeNode;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @program: suanfa
@@ -18,6 +17,7 @@ public class Utils {
     }
 
     public static TreeNode generateTreeNode(String data) {
+        data = data.trim();
         LinkedList<TreeNode> treeNodes = new LinkedList<>();
         data = data.substring(1, data.length() - 1);
         if (data.length() == 0) return null;
@@ -52,6 +52,19 @@ public class Utils {
         return root;
     }
 
+    public static ListNode genListNode(String str) {
+        str = str.trim();
+        ListNode preNode = new ListNode(0);
+        ListNode root = preNode;
+        str = str.replace("[", "").replace("]", "");
+        String[] split = str.split(",");
+        for (String s : split) {
+            root.next = new ListNode(Integer.parseInt(s));
+            root = root.next;
+        }
+        return preNode.next;
+    }
+
     public static String binarySerialize(TreeNode root) {
         if (root == null) return "[]";
         LinkedList<TreeNode> list = new LinkedList<>();
@@ -79,14 +92,23 @@ public class Utils {
     //2
     //4
     public static int[][] strToDArr(String str) {
+        str = str.trim();
         str = str.substring(1, str.length() - 1);
+        //计算子数组的长度
+        int ii = 0;
+        int len = 0;
+        while (ii < str.length() && str.charAt(ii) != ']') {
+            if (Character.isDigit(str.charAt(ii))) len++;
+            ii++;
+        }
         str = str.replace("[", "").replace("]", "");
         String[] split = str.split(",");
-        int[][] res = new int[split.length / 2][2];
+        int[][] res = new int[split.length / len][len];
         int index = 0;
         for (int i = 0; i < res.length; i++) {
-            res[i][0] = Integer.parseInt(split[index++]);
-            res[i][1] = Integer.parseInt(split[index++]);
+            for (int j = 0; j < len; j++) {
+                res[i][j] = Integer.parseInt(split[index++]);
+            }
         }
         return res;
     }
@@ -102,6 +124,25 @@ public class Utils {
         }
         return res;
     }
+
+    /**
+     * @param 字符串转字符串list
+     * @return 字符串list
+     */
+    public static List<String> strToList(String str) {
+        str = str.trim();
+        str = str.substring(1, str.length() - 1);
+        if (str.length() == 0) return new ArrayList<>();
+        List<String> res = new ArrayList<>();
+        String[] split = str.split(",");
+        for (String s : split) {
+            s = s.trim();
+            s = s.substring(1, s.length() - 1);
+            res.add(s);
+        }
+        return res;
+    }
+
 
     public static void main(String[] args) {
     }

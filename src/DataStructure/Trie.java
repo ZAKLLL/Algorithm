@@ -1,5 +1,8 @@
 package DataStructure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @program: suanfa
  * @description: 前缀树
@@ -12,7 +15,6 @@ public class Trie {
     public Trie() {
         root = new TrieNode();
     }
-
 
     public void insert(String word) {
         if (word == null) return;
@@ -88,15 +90,40 @@ public class Trie {
         return node.path;
     }
 
-    public boolean startsWith(String prefix) {
-        return prefixNumber(prefix) != 0;
+//    public boolean startsWith(String prefix) {
+//        return prefixNumber(prefix) != 0;
+//    }
+
+    public List<String> startsWith(String pre) {
+        ArrayList<String> res = new ArrayList<>();
+        if (prefixNumber(pre) == 0) return res;
+        char[] chs = pre.toCharArray();
+        int index;
+        TrieNode node = root;
+        for (char ch : chs) {
+            index = ch - 'a';
+            if (node.nexts[index] == null) return res;
+            node = node.nexts[index];
+        }
+        List<String> dfs = dfs(node);
+        for (int i = 0; i < dfs.size(); i++) {
+            dfs.set(i, pre + dfs.get(i));
+        }
+        return dfs;
     }
 
-    public static void main(String[] args) {
-        Trie trie = new Trie();
-        trie.insert("mississippi");
-        System.out.println(trie.search("mississippi"));
-
+    private List<String> dfs(TrieNode node) {
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < 26; i++) {
+            TrieNode next = node.nexts[i];
+            if (next != null) {
+                List<String> dfs = dfs(next);
+                for (String df : dfs) {
+                    res.add((char) (i + 'a') + df);
+                }
+            }
+        }
+        return res;
     }
 }
 

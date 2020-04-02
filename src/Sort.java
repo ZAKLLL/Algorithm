@@ -221,6 +221,7 @@ public class Sort {
     }
 
 
+    //对数器
     public static int[] getRandomArr(int len, int range) {
         int[] arr = new int[len];
         for (int i = 0; i < arr.length; i++) {
