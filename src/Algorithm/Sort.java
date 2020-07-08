@@ -194,7 +194,7 @@ public class Sort {
      *
      * @param ints
      */
-    public static void binarytreeheapsort(int[] ints) {
+    public static void binaryTreeHeapSort(int[] ints) {
         int end = ints.length;
         while (end >= 3) { //意味着数组中至少还有一个父节点一个子节点，任然需要比较
 
@@ -203,15 +203,15 @@ public class Sort {
             for (int i = (end - 1) / 2; i >= 1; i--) {
 
                 //假设最大儿子为左节点(是为了避免无右节点的情况，超出数组边界）
-                int maxindex = i * 2;
+                int maxIndex = i * 2;
                 //如果右儿子存在，且右儿子的值大于左儿子，则最大儿子索引变成maxindex+1
-                if (maxindex + 1 < end && ints[maxindex + 1] > ints[maxindex]) {
-                    maxindex++;
+                if (maxIndex + 1 < end && ints[maxIndex + 1] > ints[maxIndex]) {
+                    maxIndex++;
                 }
                 //判断最大儿子和父节点谁大
-                if (ints[maxindex] > ints[i]) {
-                    int temp = ints[maxindex];
-                    ints[maxindex] = ints[i];
+                if (ints[maxIndex] > ints[i]) {
+                    int temp = ints[maxIndex];
+                    ints[maxIndex] = ints[i];
                     ints[i] = temp;
                 }
             }

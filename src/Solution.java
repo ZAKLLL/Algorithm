@@ -1,4 +1,13 @@
+import Algorithm.Utils;
+import DataStructure.TreeNode;
+import javafx.print.PageOrientation;
+import jdk.nashorn.internal.ir.WhileNode;
+import org.omg.CORBA.INTERNAL;
+
 import java.lang.reflect.Array;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -11,51 +20,33 @@ public class Solution {
     //    int[][] dir = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     int[] dir = new int[]{1, 0, -1, 0, 1};
 
-    public int[] getStrongest(int[] arr, int k) {
-        Arrays.sort(arr);
-        int m = arr[((arr.length) - 1) / 2];
-        Queue<Integer> pq = new PriorityQueue<>((o1, o2) -> {
-            int a = Math.abs(o1 - m);
-            int b = Math.abs(o2 - m);
-            if (a == b) return o2 - o1;
-            return b - a;
-        });
-        for (int i : arr) {
-            pq.add(i);
+    public boolean isPathCrossing(String path) {
+        Set<List<Integer>> set = new HashSet<>();
+        int a = 0, b = 0;
+        for (int i = 0; i < path.length(); i++) {
+            ArrayList<Integer> objects = new ArrayList<>();
+            objects.add(a);
+            objects.add(b);
+            if (set.contains(objects)) return true;
+            set.add(objects);
+            char c = path.charAt(i);
+            if (c == 'N') {
+                a++;
+            } else if (c == 'S') {
+                a--;
+            } else if (c == 'E') {
+                b++;
+            } else b--;
         }
-        int[] res = new int[k];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = pq.poll();
-        }
-        return res;
+        ArrayList<Integer> objects = new ArrayList<>();
+        objects.add(a);
+        objects.add(b);
+        return set.contains(objects);
     }
+
+    public static void main(String[] args) {
+        System.out.println(new Solution().isPathCrossing("NES"));
+
+    }
+
 }
-
-class BrowserHistory {
-    int curPage;
-    LinkedList<String> list;
-
-    public BrowserHistory(String homepage) {
-        list = new LinkedList<>();
-        list.add(homepage);
-        curPage = 0;
-    }
-
-    public void visit(String url) {
-        list = new LinkedList<>(list.subList(0, ++curPage));
-        list.add(url);
-    }
-
-    public String back(int steps) {
-        curPage = Math.max(curPage - steps, 0);
-        return list.get(curPage);
-    }
-
-    public String forward(int steps) {
-        curPage=Math.min(curPage+steps,list.size()-1);
-        return list.get(curPage);
-    }
-}
-
-
-
