@@ -7,8 +7,6 @@ public class StTable {
     //数组长度
     int n = a.length - 1;
     int[] mn = new int[1000006];
-
-
     void rmq_init() {
         for (int i = 1; i <= n; i++) f[i][0] = a[i];
 

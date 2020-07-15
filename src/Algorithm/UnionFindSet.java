@@ -43,6 +43,10 @@ public class UnionFindSet {
         fatherMap.put(node, father); //使每个节点的父节点都是head节点
         return father;
     }
+    public UnioNode find(UnioNode node) {
+        while (node != fatherMap.get(node)) fatherMap.put(node, find(node));
+        return node;
+    }
 
     /**
      * @param a
