@@ -222,6 +222,11 @@ public class Sort {
         }
     }
 
+    /**
+     * 桶排序
+     * @param arr
+     * @return
+     */
     public static int[] bucketSort(int[] arr) {
         if (arr.length == 0) return arr;
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
@@ -248,6 +253,10 @@ public class Sort {
         return arr;
     }
 
+    /**
+     * 希尔排序
+     * @param arr
+     */
     public static void shellSort(int[] arr) {
         int N = arr.length;
         for (int gap = N / 2; gap > 0; gap /= 2) {
