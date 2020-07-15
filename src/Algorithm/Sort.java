@@ -248,6 +248,25 @@ public class Sort {
         return arr;
     }
 
+    public static void shellSort(int[] arr) {
+        int N = arr.length;
+        for (int gap = N / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < N; i++) {
+                //插排
+                insertSort(arr, gap, i);
+            }
+        }
+    }
+
+    private static void insertSort(int[] arr, int gap, int i) {
+        int inserted = arr[i];
+        int j;
+        for (j = i - gap; j >= 0 && inserted < arr[j]; j -= gap) {
+            arr[j + gap] = arr[j];
+        }
+        arr[j + gap] = inserted;
+    }
+
     //对数器
     public static int[] getRandomArr(int len, int range) {
         int[] arr = new int[len];
@@ -275,7 +294,7 @@ public class Sort {
             System.out.print(i + "\t");
         }
         System.out.println();
-        bucketSort(randomArr);
+        shellSort(randomArr);
 
         for (int i : randomArr) {
             System.out.print(i + "\t");
