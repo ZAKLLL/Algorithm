@@ -85,9 +85,9 @@ public class SegmentLine {
         //用数组模拟树
         int[] tree = new int[size * 4];
         build_tree(arr, tree, 0, 0, size - 1);
-        for (int i = 0; i < 15; i++) {
-            System.out.print(tree[i] + "-");
-        }
+//        for (int i = 0; i < 15; i++) {
+//            System.out.print(tree[i] + "-");
+//        }
         System.out.println();
 //        update_tree(arr, tree, 0, 0, size - 1, 4, 6);
         System.out.println(query_tree(tree, 0, 0, size - 1, 2, 4));

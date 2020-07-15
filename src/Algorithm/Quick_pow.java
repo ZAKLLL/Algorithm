@@ -1,19 +1,30 @@
 package Algorithm;
 
+import org.omg.CORBA.INTERNAL;
+
+import javax.print.attribute.standard.PrinterResolution;
+import java.util.*;
+
 public class Quick_pow {
 
-
+    /**
+     * 快速幂算法
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     long pow(int a, int b) {
         if (b == 0) return 1;
         long res = pow(a, b / 2);
-        if (b % 2 == 0) {
-            return res * res;
-        } else return res * res * a;
+        return (b & 1) == 0 ? res * res : res * res * a;
+//        if (b % 2 == 0) {
+//            return res * res;
+//        } else return res * res * a;
     }
 
-    public static void main(String[] args) {
 
-        System.out.println(new Quick_pow().pow(2, 10));
+    public static void main(String[] args) {
     }
 
 }

@@ -1,8 +1,7 @@
 package Algorithm;
 
-import java.util.Arrays;
-import java.util.Random;
 
+import java.util.*;
 
 
 /**
@@ -223,6 +222,31 @@ public class Sort {
         }
     }
 
+    public static int[] bucketSort(int[] arr) {
+        if (arr.length == 0) return arr;
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int i : arr) {
+            min = Math.min(min, i);
+            max = Math.max(max, i);
+        }
+        //设置桶数量
+        int bucketSize = arr.length / 2;
+        List<Integer>[] buckets = new ArrayList[bucketSize];
+        for (int num : arr) {
+            int bucketIndex = (num - min) / bucketSize;
+            buckets[bucketIndex] = buckets[bucketIndex] == null ? new ArrayList<>() : buckets[bucketIndex];
+            buckets[bucketIndex].add(num);
+        }
+        int index = 0;
+        for (List<Integer> bucket : buckets) {
+            if (bucket == null) continue;
+            Collections.sort(bucket);
+            for (Integer integer : bucket) {
+                arr[index++] = integer;
+            }
+        }
+        return arr;
+    }
 
     //对数器
     public static int[] getRandomArr(int len, int range) {
@@ -251,7 +275,7 @@ public class Sort {
             System.out.print(i + "\t");
         }
         System.out.println();
-        mergeSort(randomArr);
+        bucketSort(randomArr);
 
         for (int i : randomArr) {
             System.out.print(i + "\t");
