@@ -3,3 +3,4 @@
 *.docx
 *.class
 target/
+.idea/
