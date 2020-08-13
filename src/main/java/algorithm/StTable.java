@@ -1,4 +1,4 @@
-package Algorithm;
+package algorithm;
 
 public class StTable {
     int[][] f = new int[10000006][25];

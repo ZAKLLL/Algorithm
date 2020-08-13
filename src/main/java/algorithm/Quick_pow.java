@@ -1,9 +1,4 @@
-package Algorithm;
-
-import org.omg.CORBA.INTERNAL;
-
-import javax.print.attribute.standard.PrinterResolution;
-import java.util.*;
+package algorithm;
 
 public class Quick_pow {
 
