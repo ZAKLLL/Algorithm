@@ -11,9 +11,6 @@ import java.util.*;
  * @Created by zhangjiakui
  */
 public class Dijkstra {
-
-    HashMap<Character, HashMap<Character, Integer>> graph = new HashMap<>();
-
     public HashMap<Character, Integer> init_distance(HashMap<Character, HashMap<Character, Integer>> graph, Character s) {
         HashMap<Character, Integer> distance = new HashMap<>();
         distance.put(s, 0);
@@ -50,6 +47,4 @@ public class Dijkstra {
         }
         return distance;
     }
-
-
 }

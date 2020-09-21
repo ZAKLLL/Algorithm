@@ -17,9 +17,4 @@ public class Quick_pow {
 //            return res * res;
 //        } else return res * res * a;
     }
-
-
-    public static void main(String[] args) {
-    }
-
 }

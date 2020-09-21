@@ -2,17 +2,17 @@ package algorithm;
 
 /**
  * @program: suanfa
- * @description: 树状数组
+ * @description: 树状数组 Fenwick树
  * @author: ZakL
  * @create: 2020-02-23 16:46
  **/
-public class TreeArray {
+public class BinaryIndexedTree {
     //树状数组
     private int[] treeArr;
     //原数组，初始化使用
     private int[] sur;
 
-    public TreeArray(int[] arr) {
+    public BinaryIndexedTree(int[] arr) {
         this.sur = arr;
         this.treeArr = new int[arr.length + 1];
         init();
@@ -60,6 +60,5 @@ public class TreeArray {
     private int lowBit(int x) {
         return x & (-x);
     }
-
 
 }

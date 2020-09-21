@@ -1,5 +1,3 @@
-import java.util.*;
-
 /**
  * @program: suanfa
  * @description: LeetCode
@@ -8,104 +6,51 @@ import java.util.*;
  **/
 public class Solution {
 
-    /**
-     * gcd
-     *
-     * @param a
-     * @param b
-     * @return 最大公约数
-     */
-    int gcd(int a, int b) {
-        return a % b == 0 ? b : gcd(b, a % b);
-    }
 
-    int[] dir = {1, 0, -1, 0, 1};
+    private static final char[] DIGITS_HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    //给定一组 互不相同 的单词， 找出所有不同 的索引对(i, j)，使得列表中的两个单词， words[i] + words[j] ，可拼接成回文串。
-    private TrieNode root;
-
-    public List<List<Integer>> palindromePairs(String[] words) {
-        List<List<Integer>> ret = new ArrayList();
-        root = new TrieNode();
-        for (int i = 0; i < words.length; i++) {
-            insert(words[i], i);
+    public static String fromHex(String hex) {
+        /*兼容带有\x的十六进制串*/
+        hex = hex.replace("\\x", "");
+        char[] data = hex.toCharArray();
+        int len = data.length;
+        if ((len & 0x01) != 0) {
+            throw new RuntimeException("字符个数应该为偶数");
         }
-        for (int i = 0; i < words.length; i++) {
-            int m = words[i].length();
-            String s = words[i];
-            //存在“”的情况
-            if (s.length() > 0 && root.pos != -1) {
-                if (isPalindrome(s, 0, s.length() - 1)) {
-                    ret.add(Arrays.asList(i, root.pos));
-                }
-            }
-            for (int j = 0; j < m; j++) {
-                int pos = rFind(s, 0, j);
-                if (pos != -1 && pos != i && isPalindrome(s, j + 1, s.length() - 1)) ret.add(Arrays.asList(i, pos));
-                pos = rFind(s, j + 1, s.length() - 1);
-                if (pos != -1 && pos != i && isPalindrome(s, 0, j)) ret.add(Arrays.asList(pos, i));
-            }
+        byte[] out = new byte[len >> 1];
+        for (int i = 0, j = 0; j < len; i++) {
+            int f = toDigit(data[j], j) << 4;
+            j++;
+            f |= toDigit(data[j], j);
+            j++;
+            out[i] = (byte) (f & 0xFF);
         }
-        return ret;
-    }
-
-    public void insert(String word, int pos) {
-        if (word.length() == 0) root.pos = pos;
-        char[] chars = word.toCharArray();
-        int index;
-        TrieNode node = root;
-        for (char aChar : chars) {
-            index = aChar - 'a';
-            if (node.nexts[index] == null) {
-                node.nexts[index] = new TrieNode();
-            }
-            node = node.nexts[index];
-        }
-        node.pos = pos;
-    }
-
-    public int rFind(String word, int s, int e) {
-
-        int index;
-        TrieNode node = root;
-        for (int i = e; i >= s; i--) {
-            index = word.charAt(i) - 'a';
-            if (node.nexts[index] == null) return -1;
-            node = node.nexts[index];
-        }
-        return node.pos;
+        return new String(out);
     }
 
 
-    class TrieNode {
-        public int pos; //是否存在字符串以该节点结尾
-        public TrieNode[] nexts; //当前点的儿子节点字母
-
-        public TrieNode() {
-            pos = -1;
-            nexts = new TrieNode[26];
+    private static int toDigit(char ch, int index) {
+        int digit = Character.digit(ch, 16);
+        if (digit == -1) {
+            throw new RuntimeException("Illegal hexadecimal character " + ch + " at index " + index);
         }
+        return digit;
     }
 
-    public boolean isPalindrome(String s, int l, int r) {
-        if (l == r) return true;
-        int len = r - l + 1;
-        for (int i = 0; i < len / 2; i++) {
-            if (s.charAt(l + i) != s.charAt(r - i)) {
-                return false;
-            }
+
+    public static String toHex(String str) {
+        byte[] data = str.getBytes();
+        int outLength = data.length;
+        char[] out = new char[outLength << 1];
+        for (int i = 0, j = 0; i < outLength; i++) {
+            out[j++] = DIGITS_HEX[(0xF0 & data[i]) >>> 4];
+            out[j++] = DIGITS_HEX[0x0F & data[i]];
         }
-        return true;
+        return new String(out);
     }
+
 
     public static void main(String[] args) {
-        String[] strs = new String[]{"a", ""};
-        List<List<Integer>> lists = new Solution().palindromePairs(strs);
-        for (List<Integer> list : lists) {
-            System.out.println(list.get(0) + "--" + list.get(1));
-        }
+        
     }
 }
-
-
-
