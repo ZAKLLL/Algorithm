@@ -2,6 +2,8 @@ package algorithm;
 
 import DataStructure.ListNode;
 import DataStructure.TreeNode;
+import org.omg.CORBA.INTERNAL;
+import org.omg.CORBA.MARSHAL;
 
 import java.io.*;
 import java.util.*;
@@ -243,7 +245,98 @@ public class Utils {
         return true;
     }
 
-    public static void main(String[] args) {
+    public static int getTreeHeight(TreeNode root) {
+        return root == null ? 0 : Math.max(getTreeHeight(root.left), getTreeHeight(root.right)) + 1;
+    }
 
+    public static void printBinaryTree(TreeNode root) {
+        int height = getTreeHeight(root);
+        int weight = (int) Math.pow(2, height - 1) * 2 - 1;
+        int l = weight / 2;
+        List<int[]> list = new ArrayList<>();
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        List<List<TreeNode>> listList = new LinkedList<>();
+        while (!queue.isEmpty()) {
+            int len = queue.size();
+            List<TreeNode> tmp = new ArrayList<>();
+            int nullCnt = 0;
+            for (TreeNode treeNode : queue) if (treeNode == null) nullCnt++;
+            if (nullCnt == queue.size()) {
+                break;
+            }
+            for (int i = 0; i < len; i++) {
+                TreeNode poll = queue.poll();
+                tmp.add(poll);
+                if (poll != null) {
+                    queue.add(poll.left);
+                    queue.add(poll.right);
+                } else {
+                    queue.add(null);
+                    queue.add(null);
+                }
+            }
+            listList.add(tmp);
+        }
+        int[] pre = new int[weight];
+        Arrays.fill(pre, Integer.MAX_VALUE);
+        int index = 0;
+        Collections.reverse(listList);
+        for (TreeNode treeNode : listList.get(0)) {
+            pre[index] = treeNode == null ? Integer.MIN_VALUE : treeNode.val;
+            index += 2;
+        }
+        int s = 0;
+        int f = 2;
+        list.add(pre);
+        for (int i = 1; i < listList.size(); i++) {
+            int ts = s;
+            int tf = f;
+            int[] arr = new int[weight];
+            Arrays.fill(arr, Integer.MAX_VALUE);
+            for (TreeNode treeNode : listList.get(i)) {
+                arr[(ts + tf) / 2] = treeNode == null ? Integer.MIN_VALUE : treeNode.val;
+                int a = tf + 1;
+                while (a < weight && pre[a] == Integer.MAX_VALUE) {
+                    a++;
+                }
+                ts = a;
+                a++;
+                while (a < weight && pre[a] == Integer.MAX_VALUE) {
+                    a++;
+                }
+                tf = a;
+            }
+            list.add(arr);
+            int a = 0;
+            while (a < weight && arr[a] == Integer.MAX_VALUE) {
+                a++;
+            }
+            s = a;
+            a++;
+            while (a < weight && arr[a] == Integer.MAX_VALUE) {
+                a++;
+            }
+            f = a;
+            pre = arr;
+        }
+        Collections.reverse(list);
+        for (int[] ints : list) {
+            for (int anInt : ints) {
+                if (anInt == Integer.MIN_VALUE || anInt == Integer.MAX_VALUE) {
+                    System.out.print("  ");
+                } else {
+                    System.out.print(anInt);
+                }
+            }
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
+    }
+
+
+    public static void main(String[] args) {
+        printBinaryTree(generateTreeNode(""));
     }
 }

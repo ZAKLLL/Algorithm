@@ -27,8 +27,8 @@ public class AVL<T extends Comparable<T>> {
         AVLTreeNode<T> k1 = k2.left;
         k2.left = k1.right;
         k1.right = k2;
-        k2.height = Math.max(k2.left.height, k2.right.height) + 1;
-        k1.height = Math.max(k1.left.height, k1.right.height) + 1;
+        k2.height = Math.max(height(k2.left), height(k2.right)) + 1;
+        k1.height = Math.max(height(k1.left), height(k1.right)) + 1;
         return k1;
     }
 
@@ -42,8 +42,8 @@ public class AVL<T extends Comparable<T>> {
         AVLTreeNode<T> k2 = k1.right;
         k1.right = k2.left;
         k2.left = k1;
-        k2.height = Math.max(k2.left.height, k2.right.height) + 1;
-        k1.height = Math.max(k1.left.height, k1.right.height) + 1;
+        k2.height = Math.max(height(k2.left), height(k2.right)) + 1;
+        k1.height = Math.max(height(k1.left), height(k1.right)) + 1;
         return k2;
     }
 
@@ -67,6 +67,10 @@ public class AVL<T extends Comparable<T>> {
     private AVLTreeNode<T> rlRotation(AVLTreeNode<T> k1) {
         k1.right = llRotation(k1.right);
         return rrRotation(k1);
+    }
+
+    public void insert(T key) {
+        mRoot = insert(mRoot, key);
     }
 
     /**
@@ -172,6 +176,15 @@ public class AVL<T extends Comparable<T>> {
         }
         return tree;
     }
+
+    public static void main(String[] args) {
+        int[] arr = {3, 2, 1, 4, 5, 6, 7, 16, 15, 14, 13, 12, 11, 10, 8, 9};
+        AVL<Integer> integerAVL = new AVL<>();
+        for (int i : arr) {
+            integerAVL.insert(i);
+        }
+        System.out.println(integerAVL.mRoot);
+    }
 }
 
 /**
@@ -191,5 +204,15 @@ class AVLTreeNode<T extends Comparable<T>> {
         this.right = right;
         this.left = left;
         this.height = 0;
+    }
+
+    @Override
+    public String toString() {
+        return "AVLTreeNode{" +
+                "key=" + key +
+                ", height=" + height +
+                ", left=" + left +
+                ", right=" + right +
+                '}';
     }
 }
