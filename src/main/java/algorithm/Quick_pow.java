@@ -13,8 +13,5 @@ public class Quick_pow {
         if (b == 0) return 1;
         long res = pow(a, b / 2);
         return (b & 1) == 0 ? res * res : res * res * a;
-//        if (b % 2 == 0) {
-//            return res * res;
-//        } else return res * res * a;
     }
 }
