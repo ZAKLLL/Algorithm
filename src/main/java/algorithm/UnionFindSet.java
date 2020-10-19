@@ -75,3 +75,36 @@ public class UnionFindSet {
 class UnioNode {
 
 }
+
+/*------------------------并查集使用数组表示----------------------------------*/
+
+/**
+ * 不带路径压缩的并查集
+ */
+class UnionFindSetWithArr {
+    private int[] fm;
+
+    private void makeSet(int n) {
+        fm = new int[n];
+        for (int i = 0; i < n; i++) {
+            fm[i] = i;
+        }
+    }
+
+    private int find(int node) {
+        int fa = fm[node];
+        if (fa != node) {
+            fa = fm[fa];
+        }
+        fm[node] = fa;
+        return fa;
+    }
+
+    private boolean isSameSet(int a, int b) {
+        return find(a) == find(b);
+    }
+
+    private void union(int a, int b) {
+        fm[find(b)] = find(a);
+    }
+}
