@@ -101,9 +101,9 @@ public class Utils {
         str = str.substring(1, str.length() - 1);
         //计算子数组的长度
         int ii = 0;
-        int len = 0;
+        int len = 1;
         while (ii < str.length() && str.charAt(ii) != ']') {
-            if (Character.isDigit(str.charAt(ii))) len++;
+            if (str.charAt(ii) == ',') len++;
             ii++;
         }
         str = str.replace("[", "").replace("]", "");
@@ -235,6 +235,14 @@ public class Utils {
         return map;
     }
 
+    /**
+     * 是否为回文数
+     *
+     * @param s
+     * @param l
+     * @param r
+     * @return
+     */
     public static boolean isPalindrome(String s, int l, int r) {
         int len = r - l + 1;
         for (int i = 0; i < len / 2; i++) {
@@ -249,10 +257,14 @@ public class Utils {
         return root == null ? 0 : Math.max(getTreeHeight(root.left), getTreeHeight(root.right)) + 1;
     }
 
+    /**
+     * 打印二叉树
+     *
+     * @param root
+     */
     public static void printBinaryTree(TreeNode root) {
         int height = getTreeHeight(root);
         int weight = (int) Math.pow(2, height - 1) * 2 - 1;
-        int l = weight / 2;
         List<int[]> list = new ArrayList<>();
         LinkedList<TreeNode> queue = new LinkedList<>();
         queue.add(root);
@@ -335,8 +347,22 @@ public class Utils {
         }
     }
 
+    /**
+     * 二分查找左边界
+     * @param arr
+     * @param target
+     * @return
+     */
+    public static int binarySearch(int[] arr, int target) {
+        int l = 0, r = arr.length - 1;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (arr[mid] < target) l = mid + 1;
+            else r = mid;
+        }
+        return l;
+    }
 
     public static void main(String[] args) {
-        printBinaryTree(generateTreeNode(""));
     }
 }

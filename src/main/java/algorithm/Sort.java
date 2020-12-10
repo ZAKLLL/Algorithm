@@ -224,6 +224,7 @@ public class Sort {
 
     /**
      * 桶排序
+     *
      * @param arr
      * @return
      */
@@ -255,6 +256,7 @@ public class Sort {
 
     /**
      * 希尔排序
+     *
      * @param arr
      */
     public static void shellSort(int[] arr) {
@@ -317,7 +319,4 @@ public class Sort {
 
     }
 
-    public static void main(String[] args) {
-        test();
-    }
 }
