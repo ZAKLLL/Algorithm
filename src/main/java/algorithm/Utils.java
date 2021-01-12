@@ -93,7 +93,7 @@ public class Utils {
     }
 
     //7
-    //[[1,2],[1,3],[1,7],[2,4],[2,6],[3,5]]
+    //[[1,2],[1,37],[21,7],[2,4],[2,6],[3,5]]
     //2
     //4
     public static int[][] strToDArr(String str) {
@@ -364,5 +364,9 @@ public class Utils {
     }
 
     public static void main(String[] args) {
+        for (int[] ints : strToDArr("[[1,2],[1,37],[21,7],[2,4],[2,6],[3,5]]")) {
+            System.out.println(ints[0]);
+            System.out.println(ints[1]);
+        }
     }
 }
