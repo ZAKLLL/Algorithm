@@ -57,24 +57,15 @@ public class Sort {
      *
      * @param nums
      */
-    private static void InsertionSort(int[] nums) {
+    static void InsertionSort(int[] nums) {
         for (int i = 1; i < nums.length; i++) {
-            int temp = nums[i];
-            if (temp < nums[i - 1]) {
-                for (int j = i; j >= 0; j--) {
-                    if (temp > nums[j] || j == 0) {
-                        //循环后移一位
-                        if (j != 0) {
-                            if (i - j >= 0) System.arraycopy(nums, j, nums, j + 1, i - j);
-                            nums[j + 1] = temp;
-                        } else {
-                            System.arraycopy(nums, 0, nums, 1, i);
-                            nums[0] = temp;
-                        }
-                        break;
-                    }
-                }
+            int key = nums[i];
+            int j = i - 1;
+            while (j >= 0 && nums[j] > key) {
+                nums[j + 1] = nums[j];
+                j--;
             }
+            nums[j + 1] = key;
         }
     }
 
@@ -86,7 +77,7 @@ public class Sort {
      * @param end
      * @return
      */
-    public static int[] qsort(int[] arr, int start, int end) {
+    public static int[] qSort(int[] arr, int start, int end) {
         int pivot = arr[start];
         int i = start;
         int j = end;
@@ -100,8 +91,8 @@ public class Sort {
                 arr[j] = temp;
             }
         }
-        if (i - 1 > start) arr = qsort(arr, start, i - 1);
-        if (j + 1 < end) arr = qsort(arr, j + 1, end);
+        if (i - 1 > start) arr = qSort(arr, start, i - 1);
+        if (j + 1 < end) arr = qSort(arr, j + 1, end);
         return arr;
     }
 
