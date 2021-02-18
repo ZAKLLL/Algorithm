@@ -1,7 +1,5 @@
 package algorithm;
 
-import java.awt.*;
-
 /**
  * AVL BST
  */

@@ -94,7 +94,7 @@ class UnionFindSetWithArr {
     private int find(int node) {
         int fa = fm[node];
         if (fa != node) {
-            fa = fm[fa];
+            fa = find(fa);
         }
         fm[node] = fa;
         return fa;

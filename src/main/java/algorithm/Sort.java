@@ -278,6 +278,35 @@ public class Sort {
         arr[j + gap] = inserted;
     }
 
+    /**
+     * 拓扑排序
+     *
+     * @param adj      邻接表
+     * @param inDegree 入度数组
+     * @return
+     */
+    List<Integer> topologySort(List<Integer>[] adj, int[] inDegree) {
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < inDegree.length; i++) {
+            if (inDegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+        List<Integer> ret = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            Integer cur = queue.poll();
+            ret.add(cur);
+            for (Integer next : adj[cur]) {
+                inDegree[next]--;
+                if (inDegree[next] == 0) {
+                    queue.offer(next);
+                }
+            }
+        }
+        return ret;
+    }
+
+
     //对数器
     public static int[] getRandomArr(int len, int range) {
         int[] arr = new int[len];
