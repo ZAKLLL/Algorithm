@@ -43,7 +43,7 @@ public class DP_Pack {
     }
 
     //背包中的物品能选任意多次
-    public int complete(int[] cost, int[] w, int n, int V) {
+    public static int complete(int[] cost, int[] w, int n, int V) {
         int[] dp = new int[V + 1];
         for (int i = 0; i < n; i++) {
             for (int v = cost[i]; v <= V; v++) {

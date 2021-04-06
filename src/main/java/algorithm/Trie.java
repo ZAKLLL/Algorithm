@@ -1,9 +1,5 @@
 package algorithm;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * @program: suanfa
  * @description: 前缀树

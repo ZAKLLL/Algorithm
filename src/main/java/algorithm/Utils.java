@@ -349,6 +349,7 @@ public class Utils {
 
     /**
      * 二分查找左边界
+     *
      * @param arr
      * @param target
      * @return
@@ -362,6 +363,18 @@ public class Utils {
         }
         return l;
     }
+
+    /**
+     * 最大公约数算法
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
 
     public static void main(String[] args) {
         for (int[] ints : strToDArr("[[1,2],[1,37],[21,7],[2,4],[2,6],[3,5]]")) {

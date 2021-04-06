@@ -4,7 +4,7 @@ public class Quick_pow {
 
     /**
      * 快速幂算法
-     *
+     * 求a的b次方
      * @param a
      * @param b
      * @return
