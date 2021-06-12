@@ -348,12 +348,13 @@ public class Utils {
     }
 
     /**
-     * 二分查找左边界
+     * 二分查找左边界/插入位置
+     *
      * @param arr
      * @param target
      * @return
      */
-    public static int binarySearch(int[] arr, int target) {
+    public static int binarySearch_left_bound(int[] arr, int target) {
         int l = 0, r = arr.length - 1;
         while (l < r) {
             int mid = l + (r - l) / 2;
@@ -363,10 +364,21 @@ public class Utils {
         return l;
     }
 
-    public static void main(String[] args) {
-        for (int[] ints : strToDArr("[[1,2],[1,37],[21,7],[2,4],[2,6],[3,5]]")) {
-            System.out.println(ints[0]);
-            System.out.println(ints[1]);
+
+    public int binarySearch_right_bound(int[] nums, int target) {
+        int l = 0, r = nums.length - 1;
+        while (l < r) {
+            int mid = l + (r - l + 1) / 2; // +1 其实是上取整，避免最后left 和right对应值相等且等于target，这样mid还是等于left，然后判断赋值left = mid ，这样就死循环了
+            if (nums[mid] > target) {
+                r = mid - 1;
+            } else {
+                l = mid;
+            }
         }
+        return l;
+    }
+
+    public static void main(String[] args) {
+
     }
 }
