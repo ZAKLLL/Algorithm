@@ -378,7 +378,17 @@ public class Utils {
         return l;
     }
 
-    public static void main(String[] args) {
-
+    /**
+     * 最大公约数算法
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
     }
+
+
+
 }

@@ -317,7 +317,7 @@ public class Sort {
     }
 
 
-    public static void test() {
+    public static void main(String[] args) {
         int[] randomArr = getRandomArr(20, 56);
         int[] clone = randomArr.clone();
 
@@ -325,7 +325,7 @@ public class Sort {
             System.out.print(i + "\t");
         }
         System.out.println();
-        shellSort(randomArr);
+        quickSort(randomArr, 0, 19);
 
         for (int i : randomArr) {
             System.out.print(i + "\t");
