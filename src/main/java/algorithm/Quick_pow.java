@@ -14,4 +14,17 @@ public class Quick_pow {
         long res = pow(a, b / 2);
         return (b & 1) == 0 ? res * res : res * res * a;
     }
+
+    int mod = (int) 1e9 + 7;
+
+    long powWithMod(int a, long b) {
+        if (b == 0) return 1;
+        long res = powWithMod(a, b / 2);
+        if ((b & 1) == 0) res = res * res;
+        else {
+            res = ((res * res)%mod) * a;
+        }
+        return res % mod;
+    }
+
 }
